@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, ActivityIndicator, AsyncStorage } from 'react-native';
 import DismissKeyboard from '../../utils/dismissKeyboard';
 import Logo from '../../../assets/logo.png';
@@ -10,6 +10,20 @@ function Login( {navigation} ) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        setIsLoading(true);
+        async function isLogged() {
+            const token = await AsyncStorage.getItem('@AgendamentosApp:token');
+  
+            if (token) {
+                navigation.navigate('App');
+            }
+        }
+
+        isLogged();
+        setIsLoading(false);
+    }, []);
 
     async function onLogin() {
         if (!username || !password) {
@@ -23,14 +37,14 @@ function Login( {navigation} ) {
                         password                   
                 });
 
-                await AsyncStorage.setItem('@AirBnbApp:token', response.data.token);
-
+                await AsyncStorage.setItem('@AgendamentosApp:token', response.data.token);
             } catch (err) {
                 setError("Nome de usuário ou senha incorreta.");
                 console.log(err);
                 
             }
             setIsLoading(false);
+            navigation.navigate('App');
         }
     }
 
