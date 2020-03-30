@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 function SchedulesCard({schedule, onDelete}) {
@@ -14,6 +14,18 @@ function SchedulesCard({schedule, onDelete}) {
     function formatDateString (string) {
         const input = string.split("-");  // ex input "2010-01-18"
         return input[2]+ "/" +input[1]+ "/" +input[0]; 
+    }
+
+    async function confirmDelete(id) {
+        Alert.alert(
+            'Confirmação',
+            'Realmente deseja excluir esse agendamento?',
+            [
+                {text: 'Sim', onPress: () => deleteSchedule(id)},
+                {text: 'Não', style: 'cancel'},
+            ],
+            { cancelable: false }
+        )
     }
 
     async function deleteSchedule(id) {
@@ -83,7 +95,7 @@ function SchedulesCard({schedule, onDelete}) {
                     <TouchableOpacity style={styles.row}>
                         <MaterialIcons name="edit" style={styles.buttons} color="#FFF"/>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.row} onPress={() => deleteSchedule(schedule.id)}>
+                    <TouchableOpacity style={styles.row} onPress={() => confirmDelete(schedule.id)}>
                         <MaterialIcons name="delete" style={styles.buttons} color="#FFF"/>
                         <ActivityIndicator animating={isLoading} size="small" color="#000" />   
                     </TouchableOpacity>

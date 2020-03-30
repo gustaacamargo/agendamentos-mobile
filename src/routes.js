@@ -73,7 +73,6 @@ const SchedulesTabs = createBottomTabNavigator({
         defaultNavigationOptions: ({ navigation }) => ({
             tabBarIcon: ({ tintColor }) => {
                 let { routeName } = navigation.state;
-                console.log(routeName);
                 
                 let iconName;
                 if(routeName === 'Novo') {
