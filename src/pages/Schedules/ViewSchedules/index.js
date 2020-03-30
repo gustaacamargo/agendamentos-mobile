@@ -53,6 +53,18 @@ function ViewSchedule({ navigation }) {
         }
     }
 
+    async function deleteSchedule(id) {
+        await api.delete(`/schedules/${id}`)
+        .then(function (response) {
+            Alert.alert('Prontinho', 'Agendamento deletado com sucesso');
+            filter();
+        })
+        .catch(function (error) {
+            console.log(error)
+            Alert.alert('Oops...', 'Houve um tentar visualizar as informações, tente novamente!');
+        });
+    }
+
     function isNumber(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
@@ -142,7 +154,7 @@ function ViewSchedule({ navigation }) {
                             
                             <Swiper loop={false} >    
                                 {schedules.map( schedule => (
-                                    <SchedulesCard key={schedule.id} schedule={schedule}/>
+                                    <SchedulesCard onDelete={deleteSchedule} key={schedule.id} schedule={schedule}/>
                                 ))}
                             </Swiper>
                         </Swiper>

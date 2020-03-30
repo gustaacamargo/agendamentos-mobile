@@ -1,7 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
-function SchedulesCard({schedule}) {
+function SchedulesCard({schedule, onDelete}) {
+    const [isLoading, setIsLoading] = useState(false);
 
     function returnDateFormatted(date) {
         const string = date.toString();
@@ -12,6 +14,12 @@ function SchedulesCard({schedule}) {
     function formatDateString (string) {
         const input = string.split("-");  // ex input "2010-01-18"
         return input[2]+ "/" +input[1]+ "/" +input[0]; 
+    }
+
+    async function deleteSchedule(id) {
+        setIsLoading(true);
+        await onDelete(id);
+        setIsLoading(false);
     }
 
     return(
@@ -69,15 +77,19 @@ function SchedulesCard({schedule}) {
                         <Text style={styles.dataText} key={equipament.id}>{equipament.name}</Text>
                 ))}
             </ScrollView>
-            <View style={styles.buttonsGroup}>
-                {/* <TouchableOpacity onPress={() => deleteschedule(note.id)}>
-                    <MaterialIcons name="delete" style={styles.buttons} color="#FFF"/>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <MaterialIcons name="edit" style={styles.buttons} color="#FFF"/>
-                </TouchableOpacity> */}
-            </View>
-        </View>
+            {(schedule.status === 'Confirmado') && (
+                <View style={styles.buttonsGroup}>
+                {/*  */}
+                    <TouchableOpacity style={styles.row}>
+                        <MaterialIcons name="edit" style={styles.buttons} color="#FFF"/>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.row} onPress={() => deleteSchedule(schedule.id)}>
+                        <MaterialIcons name="delete" style={styles.buttons} color="#FFF"/>
+                        <ActivityIndicator animating={isLoading} size="small" color="#000" />   
+                    </TouchableOpacity>
+                </View>
+            )}
+        </View>  
     )
 }
 
@@ -125,10 +137,10 @@ const styles = StyleSheet.create({
     },
     buttonsGroup: {
         flexDirection: 'row',
-        justifyContent: 'flex-end'
+        justifyContent: 'space-between'
     },
     buttons: {
-        color: '#A24AC1',
+        color: '#042963',
         fontSize: 27, 
         marginLeft: 10,
     },
