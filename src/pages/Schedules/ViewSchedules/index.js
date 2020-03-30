@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StatusBar, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { Alert, View, Text, TextInput, StatusBar, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import Swiper from 'react-native-swiper';
 import api from '../../../services/api';
 import dateFnsFormat from 'date-fns/format';
 import Select2 from "react-native-select-two";
 import SchedulesCard from "../../../components/SchedulesCard";
-import AwesomeAlert from 'react-native-awesome-alerts';
 
 function ViewSchedule({ navigation }) {
     
@@ -14,6 +13,7 @@ function ViewSchedule({ navigation }) {
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingBt, setIsLoadingBt] = useState(false);
     const [showApp, setShowApp] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
     const [date, setDate] = useState('');
     const [periods, setPeriods] = useState([{id: "Manha", name: "Manhã"}, 
                                             {id: "Tarde", name: "Tarde"}, 
@@ -34,7 +34,7 @@ function ViewSchedule({ navigation }) {
             })
             .catch(function (error) {
                 console.log(error)
-               
+                Alert.alert('Erro', 'Houve um erro ao tentar visualizar as informações');
             });
             setIsLoading(false);   
             setShowApp(true);     
@@ -49,7 +49,7 @@ function ViewSchedule({ navigation }) {
             return dateInitial[2]+"-"+dateInitial[1]+"-"+dateInitial[0];
         } 
         else {
-            alert('insira uma data válida')            
+            Alert.alert('Data inválida', 'Por favor, insira um data válida!');           
         }
     }
 
@@ -72,13 +72,12 @@ function ViewSchedule({ navigation }) {
             })
             .catch(function (error) {
                 console.log(error)
-                //MySwal.fire('Oops...', 'Houve um tentar filtrar as informações, tente novamente!', 'error');
+                Alert.alert('Erro', 'Houve um erro ao tentar visualizar as informações');
             });
             setIsLoadingBt(false);
         }
         else {
-            
-            alert("erro")
+            Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
         }
     }
 
@@ -131,17 +130,22 @@ function ViewSchedule({ navigation }) {
                                             <Text style={styles.buttonText}>Filtrar</Text>
                                             <ActivityIndicator animating={isLoadingBt} size="small" color="#FFF" />   
                                         </TouchableOpacity>
+
+                                        { (schedules.length <= 0) ? 
+                                            (<Text style={styles.infoText}>Sem agendamentos para a pesquisa realizada</Text>) :
+                                            (<Text style={styles.infoText}>Deslize para a esquerda para visualizar seus agendamentos</Text>)
+                                        
+                                        }
                                     </View>
                                 </View>
                             </Swiper>
-
+                            
                             <Swiper loop={false} >    
                                 {schedules.map( schedule => (
                                     <SchedulesCard key={schedule.id} schedule={schedule}/>
                                 ))}
                             </Swiper>
                         </Swiper>
-
                     </View>
                 )}
             </View>      
@@ -199,6 +203,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#999'
     },
+    infoText: {
+        marginTop: 30,
+        fontSize: 18,
+        color: '#CCC'
+    },  
     button: {
         flexDirection: 'row',
         alignItems: 'center',
