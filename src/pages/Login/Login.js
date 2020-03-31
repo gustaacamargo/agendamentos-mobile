@@ -38,13 +38,13 @@ function Login( {navigation} ) {
                 });
 
                 await AsyncStorage.setItem('@AgendamentosApp:token', response.data.token);
+                navigation.navigate('App');
             } catch (err) {
                 setError("Nome de usuário ou senha incorreta.");
                 console.log(err);
                 
             }
             setIsLoading(false);
-            navigation.navigate('App');
         }
     }
 
