@@ -3,6 +3,8 @@ import { View, Text, StatusBar, TextInput, ScrollView, KeyboardAvoidingView, Sty
 import Select2 from "react-native-select-two";
 import DismissKeyboard from '../../../utils/dismissKeyboard';
 import api from '../../../services/api';
+import { formatDate } from '../../../utils/formatDate';
+import { isHourValid } from '../../../utils/isHourValid';
 
 function NewSchedule({ navigation }) {
     const [date, setDate] = useState('');
@@ -24,6 +26,7 @@ function NewSchedule({ navigation }) {
 
     const [isUser, setIsUser] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+    const [showFields, setShowFields] = useState(false);
     const [userLogged, setUserLogged] = useState([]);
 
     const [locked, setLocked] = useState(true);
@@ -56,72 +59,72 @@ function NewSchedule({ navigation }) {
 
     }, []);
 
-    function formatDate(string) {
-        const dateInitial = string.split("/");
-        if(dateInitial[1] >= 1 && dateInitial[1] <= 12 && isNumber(dateInitial[1]) ){
-            return dateInitial[2]+"-"+dateInitial[1]+"-"+dateInitial[0];
-        } 
-        else {
-            Alert.alert('Data inválida', 'Por favor, insira um data válida!');           
-        }
-    }
-
-    function isNumber(n) {
-        return !isNaN(parseFloat(n)) && isFinite(n);
-    }
-
-    async function disponibilty() {
+    async function disponibilty() {        
         if(date && initial && final) {
             setIsLoading(true);
-            await api.get("/availability", {
-                headers: { 
-                    initial,
-                    final,
-                    date_a: formatDate(date), 
-                    status: 'Confirmado'
-                },
-            })
-            .then(function (response) {
-                // if(schedule !== ''){                    
-                //     setEquipaments([...equipaments, ...response.data.avaibilityEquipaments]);
-                //     setPlaces([schedule.place, ...response.data.avaibilityPlaces]);
-                // }
-                // else {
-                    setEquipaments(response.data.avaibilityEquipaments);
-                    setPlaces(response.data.avaibilityPlaces);                                        
-                // }
-            })
-            .catch(function (error) {
-                console.log(error);
-                
-                Alert.alert('Erro', 'Houve um erro ao tentar visualizar as informações');
-            });
-            setIsLoading(false);
 
-            let array;
-            if(userLogged.function === 'adm') {                
-                const responseUsers = await api.get("/users");
-                array = responseUsers.data;
-                array.forEach(user => {
-                    user["name"] = user["fullname"];
+            if(isHourValid(initial) && isHourValid(final) && (formatDate(date) !== false)) {
+                let lenghtPlaces = 0;
+                await api.get("/availability", {
+                    headers: { 
+                        initial: initial,
+                        final: final,
+                        date_a: formatDate(date), 
+                        status: 'Confirmado'
+                    },
+                })
+                .then(function (response) {
+                    // if(schedule !== ''){                    
+                    //     setEquipaments([...equipaments, ...response.data.avaibilityEquipaments]);
+                    //     setPlaces([schedule.place, ...response.data.avaibilityPlaces]);
+                    // }
+                    // else {
+                    setEquipaments(response.data.avaibilityEquipaments);
+                    setPlaces(response.data.avaibilityPlaces);    
+                    lenghtPlaces = response.data.avaibilityPlaces.length; 
+                    // }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    
+                    Alert.alert('Erro', 'Houve um erro ao tentar visualizar as informações');
                 });
-                setUsers(array);     
+
+                if(lenghtPlaces > 0) {
+                    let array;
+                    if(userLogged.function === 'adm') {                
+                        const responseUsers = await api.get("/users");
+                        array = responseUsers.data;
+                        array.forEach(user => {
+                            user["name"] = user["fullname"];
+                        });
+                        setUsers(array);     
+                    }
+                    else {
+                        setUsers([userLogged]);
+                    }         
+
+                    const responseCategories = await api.get("/categories");
+                    array = responseCategories.data;
+                    array.forEach(category => {
+                        category["name"] = category["description"];
+                    });
+                    setCategories(array);             
+                    
+                    const responseCourses = await api.get("/courses");
+                    setCourses(responseCourses.data); 
+
+                    setLocked(false);
+                    setShowFields(true);
+                }
+                else {                
+                    Alert.alert("Sem salas para o horário solicitado", "Não há mais disponibilidade de salas para este horário!");
+                }
             }
             else {
-                setUsers([userLogged]);
-            }         
-
-            const responseCategories = await api.get("/categories");
-            array = responseCategories.data;
-            array.forEach(category => {
-                category["name"] = category["description"];
-            });
-            setCategories(array);             
-            
-            const responseCourses = await api.get("/courses");
-            setCourses(responseCourses.data); 
-
-            setLocked(false);
+                Alert.alert('Horário ou data inválida', 'Por favor, reveja os dados inseridos e tente novamente!');           
+            }   
+            setIsLoading(false);        
         }
         else {
             Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
@@ -134,15 +137,15 @@ function NewSchedule({ navigation }) {
 
             const response = await api.get('/userLogged');
             if(isUser){
-                requestingUser.id = userLogged.id;
+                requestingUser = userLogged.id;
             }
 
             await api.post("/schedules", {
-                place_id: place.id,
-                category_id: category.id,
-                course_id: course.id,
+                place_id: place[0],
+                category_id: category[0],
+                course_id: course[0],
                 registration_user_id: userLogged.id,
-                requesting_user_id: requestingUser.id,
+                requesting_user_id: requestingUser,
                 campus_id: response.data.campus.id,
                 comments,
                 date: formatDate(date),
@@ -151,9 +154,7 @@ function NewSchedule({ navigation }) {
                 equipaments: equipamentsSelected,
                 status: "Confirmado"
             })
-            .then(function (response) {
-                console.log(response);
-                
+            .then(function (response) {                
                 Alert.alert('Prontinho', 'Agendamento realizado com sucesso!');
             })
             .catch(function (error) {
@@ -161,15 +162,17 @@ function NewSchedule({ navigation }) {
                 Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
             });
 
-            //controlFields();
-            //setEquipamentsView('');
+            onClickDateOrHour();
             setComments('');
-            //setEquipament([]);
-            setEquipamentsSelected([]);
-            setPlace('');
-            setCourse('');
-            setRequestingUser('');
-            setCategory('');
+            // //controlFields();
+            // //setEquipamentsView('');
+            
+            // //setEquipament([]);
+            // setEquipamentsSelected([]);
+            // setPlace('');
+            // setCourse('');
+            // setRequestingUser('');
+            // setCategory('');
             setIsLoading(false);
         }
         else {
@@ -177,8 +180,8 @@ function NewSchedule({ navigation }) {
         }
     }
 
-    function teste() {
-        
+    function onClickDateOrHour() {
+        setShowFields(false);
     }
 
     return(
@@ -190,6 +193,7 @@ function NewSchedule({ navigation }) {
                         <View style={styles.card}>
                             <Text style={styles.titleText}>Data</Text>
                             <TextInput 
+                                onFocus={onClickDateOrHour}
                                 keyboardType="numbers-and-punctuation" 
                                 style={styles.input} 
                                 placeholder="xx/xx/xxxx"
@@ -203,6 +207,7 @@ function NewSchedule({ navigation }) {
                             <View style={{flex: 1, marginRight: 2}}>
                                 <Text style={styles.titleText}>Início</Text>
                                 <TextInput 
+                                    onFocus={onClickDateOrHour}
                                     keyboardType="numbers-and-punctuation" 
                                     style={styles.input} 
                                     placeholder="hh:mm"
@@ -213,6 +218,7 @@ function NewSchedule({ navigation }) {
                             <View style={{flex: 1, marginLeft: 2}}>
                                 <Text style={styles.titleText}>Final</Text>
                                 <TextInput 
+                                    onFocus={onClickDateOrHour}
                                     keyboardType="numbers-and-punctuation" 
                                     style={styles.input} 
                                     placeholder="hh:mm"
@@ -222,128 +228,135 @@ function NewSchedule({ navigation }) {
                             </View>
                         </View>
                     </View>
-                    <View style={styles.row} pointerEvents={(locked) ? ("none") : ("auto")}>
-                        <View style={(locked) ? (styles.cardDisabled) : (styles.card)}>
-                            <Text style={styles.titleText}>Observações</Text>
-                            <TextInput 
-                                keyboardType="default" 
-                                style={styles.input} 
-                                placeholder="Observações"
-                                value={comments}
-                                onChangeText={setComments}
-                                numberOfLines={4}
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.row} pointerEvents={(locked) ? ("none") : ("auto")}>
-                        <View style={(locked) ? (styles.cardDisabled) : (styles.card)}>
-                            <Text style={styles.titleText}>Sala</Text>
-                            <Select2
-                                isSelectSingle
-                                style={styles.input}
-                                colorTheme="blue"
-                                popupTitle="Selecione um turno"
-                                searchPlaceHolderText="Pesquisar"
-                                title="Sala"
-                                data={places}
-                                onSelect={data => {
-                                setPlace(data);                                           
-                                }}
-                                cancelButtonText="Cancelar"
-                                selectButtonText="Selecionar"
-                                listEmptyTitle="Não há nada aqui"
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.row} pointerEvents={(locked) ? ("none") : ("auto")}>
-                        <View style={(locked) ? (styles.cardDisabled) : (styles.card)}>
-                            <Text style={styles.titleText}>Ano</Text>
-                            <Select2
-                                isSelectSingle
-                                style={styles.input}
-                                colorTheme="blue"
-                                popupTitle="Selecione um turno"
-                                searchPlaceHolderText="Pesquisar"
-                                title="Ano"
-                                data={categories}
-                                onSelect={data => {
-                                setCategory(data);                                           
-                                }}
-                                cancelButtonText="Cancelar"
-                                selectButtonText="Selecionar"
-                                listEmptyTitle="Não há nada aqui"
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.row} pointerEvents={(locked) ? ("none") : ("auto")}>
-                        <View style={(locked) ? (styles.cardDisabled) : (styles.card)}>
-                            <Text style={styles.titleText}>Solicitante</Text>
-                            <Select2
-                                isSelectSingle
-                                style={styles.input}
-                                colorTheme="blue"
-                                popupTitle="Selecione um turno"
-                                searchPlaceHolderText="Pesquisar"
-                                title="Solicitante"
-                                data={users}
-                                onSelect={data => {
-                                setRequestingUser(data);                                           
-                                }}
-                                cancelButtonText="Cancelar"
-                                selectButtonText="Selecionar"
-                                listEmptyTitle="Não há nada aqui"
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.row} pointerEvents={(locked) ? ("none") : ("auto")}>
-                        <View style={(locked) ? (styles.cardDisabled) : (styles.card)}>
-                            <Text style={styles.titleText}>Curso</Text>
-                            <Select2
-                                isSelectSingle
-                                style={styles.input}
-                                colorTheme="blue"
-                                popupTitle="Selecione um turno"
-                                searchPlaceHolderText="Pesquisar"
-                                title="Curso"
-                                data={courses}
-                                onSelect={data => {
-                                setCourse(data);                                           
-                                }}
-                                cancelButtonText="Cancelar"
-                                selectButtonText="Selecionar"
-                                listEmptyTitle="Não há nada aqui"
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.row} pointerEvents={(locked) ? ("none") : ("auto")}>
-                        <View style={(locked) ? (styles.cardDisabled) : (styles.card)}>
-                            <Text style={styles.titleText}>Equipamento</Text>
-                            <Select2
-                                style={styles.input}
-                                colorTheme="blue"
-                                popupTitle="Selecione um turno"
-                                searchPlaceHolderText="Pesquisar"
-                                title="Equipamento"
-                                data={equipaments}
-                                onSelect={data => {
-                                    setEquipamentsSelected(data);                                                                          
-                                }}
-                                cancelButtonText="Cancelar"
-                                selectButtonText="Selecionar"
-                                listEmptyTitle="Não há nada aqui"
-                            />
-                        </View>
-                    </View>
-                    
-                    <TouchableOpacity onPress={disponibilty} style={styles.button}>
-                        <Text style={styles.buttonText}>Verficar disponibilidade</Text>
-                        <ActivityIndicator animating={isLoading} size="small" color="#FFF" />   
-                    </TouchableOpacity>
 
-                    <TouchableOpacity onPress={save} style={styles.button}>
-                        <Text style={styles.buttonText}>Salvar</Text>
-                        <ActivityIndicator animating={isLoading} size="small" color="#FFF" />   
-                    </TouchableOpacity>
+                    {(!showFields) && (
+                        <TouchableOpacity onPress={disponibilty} style={styles.button}>
+                            <Text style={styles.buttonText}>Verficar disponibilidade</Text>
+                            <ActivityIndicator animating={isLoading} size="small" color="#FFF" />   
+                        </TouchableOpacity>
+                    )}
+
+                    {(showFields) && (
+                        <>
+                            <View style={styles.row}>
+                                <View style={styles.card}>
+                                    <Text style={styles.titleText}>Observações</Text>
+                                    <TextInput 
+                                        keyboardType="default" 
+                                        style={styles.input} 
+                                        placeholder="Observações"
+                                        value={comments}
+                                        onChangeText={setComments}
+                                        numberOfLines={4}
+                                    />
+                                </View>
+                            </View>
+                            <View style={styles.row}>
+                                <View style={styles.card}>
+                                    <Text style={styles.titleText}>Sala</Text>
+                                    <Select2
+                                        isSelectSingle
+                                        style={styles.input}
+                                        colorTheme="blue"
+                                        popupTitle="Selecione um turno"
+                                        searchPlaceHolderText="Pesquisar"
+                                        title="Sala"
+                                        data={places}
+                                        onSelect={data => {
+                                        setPlace(data);                                           
+                                        }}
+                                        cancelButtonText="Cancelar"
+                                        selectButtonText="Selecionar"
+                                        listEmptyTitle="Não há nada aqui"
+                                    />
+                                </View>
+                            </View>
+                            <View style={styles.row}>
+                                <View style={styles.card}>
+                                    <Text style={styles.titleText}>Ano</Text>
+                                    <Select2
+                                        isSelectSingle
+                                        style={styles.input}
+                                        colorTheme="blue"
+                                        popupTitle="Selecione um turno"
+                                        searchPlaceHolderText="Pesquisar"
+                                        title="Ano"
+                                        data={categories}
+                                        onSelect={data => {
+                                        setCategory(data);                                           
+                                        }}
+                                        cancelButtonText="Cancelar"
+                                        selectButtonText="Selecionar"
+                                        listEmptyTitle="Não há nada aqui"
+                                    />
+                                </View>
+                            </View>
+                            <View style={styles.row}>
+                                <View style={styles.card}>
+                                    <Text style={styles.titleText}>Solicitante</Text>
+                                    <Select2
+                                        isSelectSingle
+                                        style={styles.input}
+                                        colorTheme="blue"
+                                        popupTitle="Selecione um turno"
+                                        searchPlaceHolderText="Pesquisar"
+                                        title="Solicitante"
+                                        data={users}
+                                        onSelect={data => {
+                                        setRequestingUser(data);                                           
+                                        }}
+                                        cancelButtonText="Cancelar"
+                                        selectButtonText="Selecionar"
+                                        listEmptyTitle="Não há nada aqui"
+                                    />
+                                </View>
+                            </View>
+                            <View style={styles.row}>
+                                <View style={styles.card}>
+                                    <Text style={styles.titleText}>Curso</Text>
+                                    <Select2
+                                        isSelectSingle
+                                        style={styles.input}
+                                        colorTheme="blue"
+                                        popupTitle="Selecione um turno"
+                                        searchPlaceHolderText="Pesquisar"
+                                        title="Curso"
+                                        data={courses}
+                                        onSelect={data => {
+                                        setCourse(data);                                                                           
+                                        }}
+                                        cancelButtonText="Cancelar"
+                                        selectButtonText="Selecionar"
+                                        listEmptyTitle="Não há nada aqui"
+                                    />
+                                </View>
+                            </View>
+                            <View style={styles.row}>
+                                <View style={styles.card}>
+                                    <Text style={styles.titleText}>Equipamento</Text>
+                                    <Select2
+                                        style={styles.input}
+                                        colorTheme="blue"
+                                        popupTitle="Selecione um turno"
+                                        searchPlaceHolderText="Pesquisar"
+                                        title="Equipamento"
+                                        data={equipaments}
+                                        onSelect={data => {
+                                            setEquipamentsSelected(data);                                                                          
+                                        }}
+                                        cancelButtonText="Cancelar"
+                                        selectButtonText="Selecionar"
+                                        listEmptyTitle="Não há nada aqui"
+                                    />
+                                </View>
+                            </View>
+
+                            <TouchableOpacity onPress={save} style={styles.button}>
+                                <Text style={styles.buttonText}>Salvar</Text>
+                                <ActivityIndicator animating={isLoading} size="small" color="#FFF" />   
+                            </TouchableOpacity>
+                        </>
+                    )}
                 </ScrollView>
             </KeyboardAvoidingView>
         </DismissKeyboard>

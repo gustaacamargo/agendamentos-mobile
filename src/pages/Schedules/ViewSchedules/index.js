@@ -5,6 +5,7 @@ import api from '../../../services/api';
 import dateFnsFormat from 'date-fns/format';
 import Select2 from "react-native-select-two";
 import SchedulesCard from "../../../components/SchedulesCard";
+import formatDate from '../../../utils/formatDate';
 
 function ViewSchedule({ navigation }) {
     
@@ -43,16 +44,6 @@ function ViewSchedule({ navigation }) {
         retrieveSchedules();
     }, []);
 
-    function formatDate(string) {
-        const dateInitial = string.split("/");
-        if(dateInitial[1] >= 1 && dateInitial[1] <= 12 && isNumber(dateInitial[1]) ){
-            return dateInitial[2]+"-"+dateInitial[1]+"-"+dateInitial[0];
-        } 
-        else {
-            Alert.alert('Data inválida', 'Por favor, insira um data válida!');           
-        }
-    }
-
     async function deleteSchedule(id) {
         await api.delete(`/schedules/${id}`)
         .then(function (response) {
@@ -72,21 +63,26 @@ function ViewSchedule({ navigation }) {
     async function filter() {
 
         if(date && period) {
-            setIsLoadingBt(true);  
-            await api.get("/filter", {
-                headers: { 
-                    period: period[0],
-                    date_a: formatDate(date), 
-                },
-            })
-            .then(function (response) {
-                setSchedules(response.data);                
-            })
-            .catch(function (error) {
-                console.log(error)
-                Alert.alert('Erro', 'Houve um erro ao tentar visualizar as informações');
-            });
-            setIsLoadingBt(false);
+            if(formatDate(date) !== false){
+                setIsLoadingBt(true);  
+                await api.get("/filter", {
+                    headers: { 
+                        period: period[0],
+                        date_a: formatDate(date), 
+                    },
+                })
+                .then(function (response) {
+                    setSchedules(response.data);                
+                })
+                .catch(function (error) {
+                    console.log(error)
+                    Alert.alert('Erro', 'Houve um erro ao tentar visualizar as informações');
+                });
+                setIsLoadingBt(false);
+            }
+            else {
+                Alert.alert('Data inválida', 'Por favor, insira um data válida!');           
+            }            
         }
         else {
             Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
