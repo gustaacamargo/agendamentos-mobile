@@ -5,7 +5,7 @@ import api from '../../../services/api';
 import dateFnsFormat from 'date-fns/format';
 import Select2 from "react-native-select-two";
 import SchedulesCard from "../../../components/SchedulesCard";
-import formatDate from '../../../utils/formatDate';
+import { formatDate } from '../../../utils/formatDate';
 
 function ViewSchedule({ navigation }) {
     
@@ -63,7 +63,8 @@ function ViewSchedule({ navigation }) {
     async function filter() {
 
         if(date && period) {
-            if(formatDate(date) !== false){
+            if((formatDate(date) !== false)){
+                
                 setIsLoadingBt(true);  
                 await api.get("/filter", {
                     headers: { 
