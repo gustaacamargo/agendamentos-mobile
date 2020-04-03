@@ -56,8 +56,17 @@ function ViewSchedule({ navigation }) {
         });
     }
 
-    function isNumber(n) {
-        return !isNaN(parseFloat(n)) && isFinite(n);
+    async function editSchedule(id, data) {        
+
+        await api.put(`/schedules/${id}`, data)
+        .then(function (response) {                
+            Alert.alert('Prontinho', 'Agendamento editado com sucesso!');
+            filter();
+        })
+        .catch(function (error) {
+            console.log(error)
+            Alert.alert('Oops...', 'Houve um erro ao tentar editar o agendamento');
+        });
     }
 
     async function filter() {
@@ -151,7 +160,7 @@ function ViewSchedule({ navigation }) {
                             
                             <Swiper loop={false} >    
                                 {schedules.map( schedule => (
-                                    <SchedulesCard onDelete={deleteSchedule} key={schedule.id} schedule={schedule}/>
+                                    <SchedulesCard onEdit={editSchedule} onDelete={deleteSchedule} key={schedule.id} schedule={schedule}/>
                                 ))}
                             </Swiper>
                         </Swiper>

@@ -46,7 +46,7 @@ function FormSchedule({ onSubmit, schedule }) {
         getUser();
 
         if(schedule !== ''){            
-            setDate(schedule.date);
+            setDate(returnDateFormatted(schedule.date));
             setEquipaments(schedule.equipaments);
             setInitial(schedule.initial);
             setFinal(schedule.final);
@@ -58,6 +58,17 @@ function FormSchedule({ onSubmit, schedule }) {
         }
 
     }, []);
+
+    function returnDateFormatted(date) {
+        const string = date.toString();
+        const dateString = string.split("T");
+        return formatDateString(dateString[0]);
+    }
+
+    function formatDateString (string) {
+        const input = string.split("-");  // ex input "2010-01-18"
+        return input[2]+ "/" +input[1]+ "/" +input[0]; 
+    }
 
     async function disponibilty() {        
         if(date && initial && final) {
@@ -77,12 +88,13 @@ function FormSchedule({ onSubmit, schedule }) {
                     if(schedule !== ''){                    
                         setEquipaments([...equipaments, ...response.data.avaibilityEquipaments]);
                         setPlaces([schedule.place, ...response.data.avaibilityPlaces]);
+                        lenghtPlaces = response.data.avaibilityPlaces.length+1; 
                     }
                     else {
                         setEquipaments(response.data.avaibilityEquipaments);
-                        setPlaces(response.data.avaibilityPlaces);    
+                        setPlaces(response.data.avaibilityPlaces);   
+                        lenghtPlaces = response.data.avaibilityPlaces.length;  
                     }
-                    lenghtPlaces = response.data.avaibilityPlaces.length; 
 
                 })
                 .catch(function (error) {

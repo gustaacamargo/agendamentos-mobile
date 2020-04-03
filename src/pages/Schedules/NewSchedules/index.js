@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, StatusBar, TextInput, ScrollView, KeyboardAvoidingView, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
-import Select2 from "react-native-select-two";
+import React from "react";
+import { StatusBar, KeyboardAvoidingView, StyleSheet, Alert } from "react-native";
 import DismissKeyboard from '../../../utils/dismissKeyboard';
 import api from '../../../services/api';
-import { formatDate } from '../../../utils/formatDate';
 import FormSchedule from '../../../components/Form Schedule';
 
 function NewSchedule({ navigation }) {

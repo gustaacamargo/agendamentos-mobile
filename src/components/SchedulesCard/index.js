@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import FormSchedule from '../Form Schedule';
 
-function SchedulesCard({schedule, onDelete}) {
+function SchedulesCard({schedule, onDelete, onEdit}) {
     const [isLoading, setIsLoading] = useState(false);
+    const [showEdit, setShowEdit] = useState(false);
 
     function returnDateFormatted(date) {
         const string = date.toString();
@@ -34,74 +36,101 @@ function SchedulesCard({schedule, onDelete}) {
         setIsLoading(false);
     }
 
+    async function editSchedule(id, data) {
+        setIsLoading(true);
+        await onEdit(id, data);
+        setIsLoading(false);
+        backToPageApp();
+    }
+
+    function backToPageApp() {
+        setShowEdit(false);
+    }
+
     return(
-        <View style={styles.card}>
-            <ScrollView>
-                <Text style={styles.titleText}>Data</Text>
-                <Text style={styles.dataText} >{returnDateFormatted(schedule.date)}</Text>
+        <>
+            {showEdit ? 
+                (
+                    <>
+                        <FormSchedule onSubmit={editSchedule} schedule={schedule}/>
+                        <View style={styles.pd10}>
+                            <TouchableOpacity onPress={backToPageApp} style={styles.button}>
+                                <Text style={styles.buttonText}>Voltar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </>
+                )
+                :
+                (
+                    <View style={styles.card}>
+                        <ScrollView>
+                            <Text style={styles.titleText}>Data</Text>
+                            <Text style={styles.dataText} >{returnDateFormatted(schedule.date)}</Text>
 
-                <View style={styles.row}>
-                    <View style={styles.mr}>
-                        <Text style={styles.titleText}>Início</Text>
-                        <Text style={styles.dataText} >{schedule.initial}</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.titleText}>Final</Text>
-                        <Text style={styles.dataText} >{schedule.final}</Text>
-                    </View>            
-                </View>
+                            <View style={styles.row}>
+                                <View style={styles.mr}>
+                                    <Text style={styles.titleText}>Início</Text>
+                                    <Text style={styles.dataText} >{schedule.initial}</Text>
+                                </View>
+                                <View>
+                                    <Text style={styles.titleText}>Final</Text>
+                                    <Text style={styles.dataText} >{schedule.final}</Text>
+                                </View>            
+                            </View>
 
-                <View style={styles.row}>
-                    <View style={styles.mr}>
-                        <Text style={styles.titleText}>Sala</Text>
-                        <Text style={styles.dataText} >{schedule.place.name}</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.titleText}>Ano</Text>
-                        <Text style={styles.dataText} >{schedule.category.description}</Text>
-                    </View>            
-                </View>
+                            <View style={styles.row}>
+                                <View style={styles.mr}>
+                                    <Text style={styles.titleText}>Sala</Text>
+                                    <Text style={styles.dataText} >{schedule.place.name}</Text>
+                                </View>
+                                <View>
+                                    <Text style={styles.titleText}>Ano</Text>
+                                    <Text style={styles.dataText} >{schedule.category.description}</Text>
+                                </View>            
+                            </View>
 
-                <Text style={styles.titleText}>Solicitante</Text>
-                <Text style={styles.dataText} >{schedule.requesting_user.fullname}</Text>
+                            <Text style={styles.titleText}>Solicitante</Text>
+                            <Text style={styles.dataText} >{schedule.requesting_user.fullname}</Text>
 
-                <Text style={styles.titleText}>Cadastrador</Text>
-                <Text style={styles.dataText} >{schedule.registration_user.fullname}</Text>
+                            <Text style={styles.titleText}>Cadastrador</Text>
+                            <Text style={styles.dataText} >{schedule.registration_user.fullname}</Text>
 
-                <View style={styles.row}>
-                    <View style={styles.mr}>
-                        <Text style={styles.titleText}>Curso</Text>
-                        <Text style={styles.dataText} >{schedule.course.name}</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.titleText}>Status</Text>
-                        <Text style={
-                            (schedule.status === 'Cancelado') ? (styles.red) : (styles.dataText)}
-                        >{schedule.status}</Text>
-                    </View>            
-                </View>
+                            <View style={styles.row}>
+                                <View style={styles.mr}>
+                                    <Text style={styles.titleText}>Curso</Text>
+                                    <Text style={styles.dataText} >{schedule.course.name}</Text>
+                                </View>
+                                <View>
+                                    <Text style={styles.titleText}>Status</Text>
+                                    <Text style={
+                                        (schedule.status === 'Cancelado') ? (styles.red) : (styles.dataText)}
+                                    >{schedule.status}</Text>
+                                </View>            
+                            </View>
 
-                <Text style={styles.titleText}>Observações</Text>
-                <Text style={styles.dataText} >{schedule.comments}</Text>
-                
-                <Text style={styles.titleText}>Equipamentos</Text>
-                {schedule.equipaments.map( equipament => (
-                        <Text style={styles.dataText} key={equipament.id}>{equipament.name}</Text>
-                ))}
-            </ScrollView>
-            {(schedule.status === 'Confirmado') && (
-                <View style={styles.buttonsGroup}>
-                {/*  */}
-                    <TouchableOpacity style={styles.row}>
-                        <MaterialIcons name="edit" style={styles.buttons} color="#FFF"/>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.row} onPress={() => confirmDelete(schedule.id)}>
-                        <MaterialIcons name="delete" style={styles.buttons} color="#FFF"/>
-                        <ActivityIndicator animating={isLoading} size="small" color="#000" />   
-                    </TouchableOpacity>
-                </View>
+                            <Text style={styles.titleText}>Observações</Text>
+                            <Text style={styles.dataText} >{schedule.comments}</Text>
+                            
+                            <Text style={styles.titleText}>Equipamentos</Text>
+                            {schedule.equipaments.map( equipament => (
+                                    <Text style={styles.dataText} key={equipament.id}>{equipament.name}</Text>
+                            ))}
+                        </ScrollView>
+                        {(schedule.status === 'Confirmado') && (
+                            <View style={styles.buttonsGroup}>
+                            {/*  */}
+                                <TouchableOpacity onPress={() => setShowEdit(true)} style={styles.row}>
+                                    <MaterialIcons name="edit" style={styles.buttons} color="#FFF"/>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.row} onPress={() => confirmDelete(schedule.id)}>
+                                    <MaterialIcons name="delete" style={styles.buttons} color="#FFF"/>
+                                    <ActivityIndicator animating={isLoading} size="small" color="#000" />   
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </View>  
             )}
-        </View>  
+        </>
     )
 }
 
@@ -179,15 +208,17 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: '#042963',
         alignSelf: 'stretch',
-        marginTop: 15
+        marginRight: 5,
+        marginLeft: 5,
+        marginTop: 5
     },
     buttonText: {
         color: '#FFF',
         fontWeight: 'bold',
         fontSize: 16,
         textAlign: 'center',
-        marginRight: 5
     },
+    
 });
 
 export default SchedulesCard;
