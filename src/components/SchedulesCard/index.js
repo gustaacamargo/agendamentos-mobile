@@ -2,21 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import FormSchedule from '../Form Schedule';
+import { returnDateFormatted } from '../../utils/returnDateFormatted';
 
 function SchedulesCard({schedule, onDelete, onEdit}) {
     const [isLoading, setIsLoading] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
-
-    function returnDateFormatted(date) {
-        const string = date.toString();
-        const dateString = string.split("T");
-        return formatDateString(dateString[0]);
-    }
-
-    function formatDateString (string) {
-        const input = string.split("-");  // ex input "2010-01-18"
-        return input[2]+ "/" +input[1]+ "/" +input[0]; 
-    }
 
     async function confirmDelete(id) {
         Alert.alert(
