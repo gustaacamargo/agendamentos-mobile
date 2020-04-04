@@ -15,8 +15,8 @@ function CustomDrawer({ navigation }) {
             const response = await api.get("/userLogged");
             if(response.data.user.function === 'adm') {
                 setAdm(true);
-                setUser(response.data.user);                
             }
+            setUser(response.data.user);                
             setCampus(response.data.campus);
         }
 
