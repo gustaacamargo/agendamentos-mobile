@@ -14,7 +14,6 @@ function ViewSchedule({ navigation }) {
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingBt, setIsLoadingBt] = useState(false);
     const [showApp, setShowApp] = useState(false);
-    const [showAlert, setShowAlert] = useState(false);
     const [date, setDate] = useState('');
     const [periods, setPeriods] = useState([{id: "Manha", name: "Manhã"}, 
                                             {id: "Tarde", name: "Tarde"}, 

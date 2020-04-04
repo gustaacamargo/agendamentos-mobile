@@ -35,14 +35,14 @@ function Login( {navigation} ) {
                 const response = await api.post("/sessions", {                     
                         username, 
                         password                   
-                });
+                });  
 
                 await AsyncStorage.setItem('@AgendamentosApp:token', response.data.token);
+
                 navigation.navigate('App');
             } catch (err) {
                 setError("Nome de usuário ou senha incorreta.");
                 console.log(err);
-                
             }
             setIsLoading(false);
         }
