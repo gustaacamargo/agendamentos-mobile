@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, AsyncStorage } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, MaterialIcons, AntDesign } from '@expo/vector-icons';
 import Logo from '../../../assets/logo.png';
 import api from '../../services/api';
 
@@ -45,9 +45,11 @@ function CustomDrawer({ navigation }) {
                     <View style={styles.userArea}>
 
                         <TouchableOpacity style={styles.buttonOption} onPress={() => navigateOption('Agendamentos')}>
+                            <MaterialIcons name="schedule" style={{fontSize: 20, marginRight: 5}} color="#000"/>
                             <Text style={styles.options}>Agendamentos</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.buttonOption} onPress={() => navigateOption('Anos')}>
+                            <AntDesign name="appstore-o" style={{fontSize: 20, marginRight: 5}} color="#000"/>
                             <Text style={styles.options}>Anos</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.buttonOption} onPress={() => logout()}>
@@ -58,6 +60,7 @@ function CustomDrawer({ navigation }) {
                 ) : (
                     <View style={styles.userArea}>
                         <TouchableOpacity style={styles.buttonOption} onPress={() => navigateOption('Agendamentos')}>
+                            <MaterialIcons name="schedule" style={{fontSize: 20, marginRight: 5}} color="#000"/>
                             <Text style={styles.options}>Agendamentos</Text>
                         </TouchableOpacity>    
                         <TouchableOpacity style={styles.buttonOption} onPress={() => logout()}>
