@@ -97,7 +97,12 @@ function FormSchedule({ onSubmit, schedule }) {
                     let array;
                     if(userLogged.function === 'adm') {                
                         const responseUsers = await api.get("/users");
-                        array = responseUsers.data;
+
+                        const usersReceived = responseUsers.data.filter((elem) => {
+                            return elem.status === 'Ativo';
+                        });
+
+                        array = usersReceived;
                         array.forEach(user => {
                             user["name"] = user["fullname"];
                         });
@@ -108,14 +113,20 @@ function FormSchedule({ onSubmit, schedule }) {
                     }         
 
                     const responseCategories = await api.get("/categories");
-                    array = responseCategories.data;
+                    const categoriesReceived = responseCategories.data.filter((elem) => {
+                        return elem.status === 'Ativo';
+                    });
+                    array = categoriesReceived;
                     array.forEach(category => {
                         category["name"] = category["description"];
                     });
                     setCategories(array);             
                     
                     const responseCourses = await api.get("/courses");
-                    setCourses(responseCourses.data); 
+                    const coursesReceived = responseCourses.data.filter((elem) => {
+                        return elem.status === 'Ativo';
+                    });
+                    setCourses(coursesReceived); 
 
                     setLocked(false);
                     setShowFields(true);
