@@ -15,6 +15,8 @@ import ViewCourses from './pages/Courses/ViewCourses';
 import NewCourses from './pages/Courses/NewCourses';
 import ViewCampus from './pages/Campus/ViewCampus';
 import NewCampus from './pages/Campus/NewCampus';
+import ViewEquipaments from './pages/Equipaments/ViewEquipaments';
+import NewEquipaments from './pages/Equipaments/NewEquipaments';
 import CustomDrawer from './components/CustomDrawer';
 
 const StackLogin = createStackNavigator({
@@ -335,6 +337,83 @@ const CampusTabs = createBottomTabNavigator({
         }
 });
 
+const StackViewEquipaments = createStackNavigator({
+    Visualizar: {
+        screen: ViewEquipaments,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Equipamentos',
+            headerLeft: () =>
+                <TouchableOpacity onPress={() => navigation.toggleDrawer()} >
+                    <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 5}} color="#FFF"/>
+                </TouchableOpacity>
+            
+        })
+    },
+    }, {
+    defaultNavigationOptions: {
+        headerTintColor: '#FFF',
+        headerBackTitleVisible: false,
+        headerStyle: {
+            backgroundColor: '#042963'
+        }
+        
+    }
+});
+
+const StackNewEquipaments = createStackNavigator({
+    NewEquipaments: {
+        screen: NewEquipaments,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Equipamentos',
+            headerLeft: () =>
+                <TouchableOpacity onPress={() => navigation.toggleDrawer()} >
+                    <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 5}} color="#FFF"/>
+                </TouchableOpacity>
+            
+        })
+    },
+    }, {
+    defaultNavigationOptions: {
+        headerTintColor: '#FFF',
+        headerBackTitleVisible: false,
+        headerStyle: {
+            backgroundColor: '#042963'
+        }
+        
+    }
+});
+
+const EquipamentsTabs = createBottomTabNavigator({
+        Novo: StackNewEquipaments,
+        Visualizar: StackViewEquipaments
+    }, {
+        defaultNavigationOptions: ({ navigation }) => ({
+            tabBarIcon: ({ tintColor }) => {
+                let { routeName } = navigation.state;
+                
+                let iconName;
+                if(routeName === 'Novo') {
+                    iconName = 'add';
+                }
+                else if(routeName === 'Visualizar') {
+                    iconName = 'list';
+                }
+                return (
+                    <MaterialIcons 
+                        name={`${iconName}`} 
+                        style={{fontSize: 30}} 
+                        color="#FFF"/>
+                );
+            }
+        }),
+        tabBarOptions: {
+            activeBackgroundColor: '#042963',
+            inactiveBackgroundColor: '#042963',
+            activeTintColor: 'white',
+            inactiveTintColor: 'gray'
+        }
+});
+
 const Drawer = createDrawerNavigator({
     Agendamentos: {
         screen: SchedulesTabs,
@@ -347,6 +426,9 @@ const Drawer = createDrawerNavigator({
     },
     Cursos: {
         screen: CoursesTabs,
+    },
+    Equipamentos: {
+        screen: EquipamentsTabs,
     },
 }, {
     defaultNavigationOptions: {
