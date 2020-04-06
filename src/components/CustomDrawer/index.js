@@ -52,6 +52,10 @@ function CustomDrawer({ navigation }) {
                             <AntDesign name="appstore-o" style={{fontSize: 20, marginRight: 5}} color="#000"/>
                             <Text style={styles.options}>Anos</Text>
                         </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonOption} onPress={() => navigateOption('Cursos')}>
+                            <MaterialIcons name="library-books" style={{fontSize: 20, marginRight: 5}} color="#000"/>
+                            <Text style={styles.options}>Cursos</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity style={styles.buttonOption} onPress={() => logout()}>
                             <FontAwesome name="sign-out" style={{fontSize: 20, marginRight: 5}} color="#000"/>
                             <Text style={styles.options}>Sair</Text>

@@ -109,6 +109,7 @@ function FormSchedule({ onSubmit, schedule }) {
                         setUsers(array);     
                     }
                     else {
+                        userLogged["name"] = userLogged["fullname"];
                         setUsers([userLogged]);
                     }         
 
