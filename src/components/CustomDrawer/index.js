@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, AsyncStorage } from 'react-native';
-import { FontAwesome, MaterialIcons, AntDesign } from '@expo/vector-icons';
+import { FontAwesome, MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import Logo from '../../../assets/logo.png';
 import api from '../../services/api';
 
@@ -51,6 +51,10 @@ function CustomDrawer({ navigation }) {
                         <TouchableOpacity style={styles.buttonOption} onPress={() => navigateOption('Anos')}>
                             <AntDesign name="appstore-o" style={{fontSize: 20, marginRight: 5}} color="#000"/>
                             <Text style={styles.options}>Anos</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonOption} onPress={() => navigateOption('Campus')}>
+                            <FontAwesome5 name="university" style={{fontSize: 20, marginRight: 5}} color="#000"/>
+                            <Text style={styles.options}>Campus</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.buttonOption} onPress={() => navigateOption('Cursos')}>
                             <MaterialIcons name="library-books" style={{fontSize: 20, marginRight: 5}} color="#000"/>
