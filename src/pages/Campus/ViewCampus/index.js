@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Alert, View, StatusBar, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Alert, View, StatusBar, StyleSheet, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
 import Swiper from 'react-native-swiper';
 import api from '../../../services/api';
 import CampusCard from "../../../components/CampusCard";
@@ -7,27 +7,35 @@ import CampusCard from "../../../components/CampusCard";
 function ViewCampus() {
     const [campuses, setCampuses] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [modified, setModified] = useState(false);
     const [showApp, setShowApp] = useState(false);
 
+    const onRefresh = useCallback(() => {
+        setIsRefreshing(true);
+        retrieveCampuses();
+        setIsRefreshing(false);
+        
+    }, [isRefreshing]);
+
     useEffect(() => {
         setIsLoading(true);  
-        
-        async function retrieveCampuses() {
-            await api.get("/campuses")
-            .then(function (response) {
-                setCampuses(response.data);
-            })
-            .catch(function (error) {
-                console.log(error)
-                Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
-            });
-            setIsLoading(false);   
-            setShowApp(true);    
-        }  
-
         retrieveCampuses();
+
     }, [modified]);
+
+    async function retrieveCampuses() {
+        await api.get("/campuses")
+        .then(function (response) {
+            setCampuses(response.data);
+        })
+        .catch(function (error) {
+            console.log(error)
+            Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
+        });
+        setIsLoading(false);   
+        setShowApp(true);    
+    }  
 
     async function deleteCampus(id) {
         await api.delete(`/campuses/${id}`)
@@ -61,7 +69,12 @@ function ViewCampus() {
     return(
         <>
             <StatusBar barStyle="light-content"/>
-            <View style={styles.main}>
+            <ScrollView 
+                contentContainerStyle={styles.main}
+                refreshControl={
+                    <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+                }
+            >
                 { isLoading && (
                     <View style={styles.loading}>
                         <ActivityIndicator size="large" color="#FFF" />    
@@ -70,14 +83,17 @@ function ViewCampus() {
                 
                 {showApp && (
                     <View style={styles.row}>                          
-                        <Swiper loop={false} >    
+                        <Swiper 
+                            loop={false} 
+                            showsPagination={false}
+                        >    
                             {campuses.map( campus => (
                                 <CampusCard onEdit={editCampus} onDelete={deleteCampus} key={campus.id} campus={campus}/>
                             ))}
                         </Swiper>
                     </View>
                 )}
-            </View>      
+            </ScrollView>      
         </>
     );
 }

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Alert, View, StatusBar, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Alert, View, StatusBar, StyleSheet, ActivityIndicator, RefreshControl, ScrollView } from 'react-native';
 import Swiper from 'react-native-swiper';
 import api from '../../../services/api';
 import CoursesCard from "../../../components/CoursesCard";
@@ -7,27 +7,35 @@ import CoursesCard from "../../../components/CoursesCard";
 function ViewCourses() {
     const [courses, setCourses] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [modified, setModified] = useState(false);
     const [showApp, setShowApp] = useState(false);
 
+    const onRefresh = useCallback(() => {
+        setIsRefreshing(true);
+        retrieveCourses();
+        setIsRefreshing(false);
+        
+    }, [isRefreshing]);
+
     useEffect(() => {
         setIsLoading(true);  
-        
-        async function retrieveCourses() {
-            await api.get("/courses")
-            .then(function (response) {
-                setCourses(response.data);
-            })
-            .catch(function (error) {
-                console.log(error)
-                Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
-            });
-            setIsLoading(false);   
-            setShowApp(true);    
-        }  
-
         retrieveCourses();
+
     }, [modified]);
+
+    async function retrieveCourses() {
+        await api.get("/courses")
+        .then(function (response) {
+            setCourses(response.data);
+        })
+        .catch(function (error) {
+            console.log(error)
+            Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
+        });
+        setIsLoading(false);   
+        setShowApp(true);    
+    }  
 
     async function deleteCourse(id) {
         await api.delete(`/courses/${id}`)
@@ -61,7 +69,12 @@ function ViewCourses() {
     return(
         <>
             <StatusBar barStyle="light-content"/>
-            <View style={styles.main}>
+            <ScrollView 
+                contentContainerStyle={styles.main}
+                refreshControl={
+                    <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+                }
+            >
                 { isLoading && (
                     <View style={styles.loading}>
                         <ActivityIndicator size="large" color="#FFF" />    
@@ -70,14 +83,17 @@ function ViewCourses() {
                 
                 {showApp && (
                     <View style={styles.row}>                          
-                        <Swiper loop={false} >    
+                        <Swiper 
+                            loop={false} 
+                            showsPagination={false}
+                        >    
                             {courses.map( course => (
                                 <CoursesCard onEdit={editCourse} onDelete={deleteCourse} key={course.id} course={course}/>
                             ))}
                         </Swiper>
                     </View>
                 )}
-            </View>      
+            </ScrollView>      
         </>
     );
 }

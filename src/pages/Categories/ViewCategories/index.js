@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Alert, View, StatusBar, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Alert, View, StatusBar, StyleSheet, RefreshControl, ScrollView, ActivityIndicator } from 'react-native';
 import Swiper from 'react-native-swiper';
 import api from '../../../services/api';
 import CategoriesCard from "../../../components/CategoriesCard";
@@ -7,27 +7,35 @@ import CategoriesCard from "../../../components/CategoriesCard";
 function ViewCategories() {
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [modified, setModified] = useState(false);
     const [showApp, setShowApp] = useState(false);
 
+    const onRefresh = useCallback(() => {
+        setIsRefreshing(true);
+        retrieveCategories();
+        setIsRefreshing(false);
+        
+      }, [isRefreshing]);
+
     useEffect(() => {
         setIsLoading(true);  
-        
-        async function retrieveCategories() {
-            await api.get("/categories")
-            .then(function (response) {
-                setCategories(response.data);
-            })
-            .catch(function (error) {
-                console.log(error)
-                Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
-            });
-            setIsLoading(false);   
-            setShowApp(true);    
-        }  
-
         retrieveCategories();
+
     }, [modified]);
+
+    async function retrieveCategories() {
+        await api.get("/categories")
+        .then(function (response) {
+            setCategories(response.data);
+        })
+        .catch(function (error) {
+            console.log(error)
+            Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
+        });
+        setIsLoading(false);   
+        setShowApp(true);    
+    }  
 
     async function deleteCategory(id) {
         await api.delete(`/categories/${id}`)
@@ -61,7 +69,12 @@ function ViewCategories() {
     return(
         <>
             <StatusBar barStyle="light-content"/>
-            <View style={styles.main}>
+            <ScrollView 
+                contentContainerStyle={styles.main}
+                refreshControl={
+                    <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+                }
+            >
                 { isLoading && (
                     <View style={styles.loading}>
                         <ActivityIndicator size="large" color="#FFF" />    
@@ -69,15 +82,18 @@ function ViewCategories() {
                 }
                 
                 {showApp && (
-                    <View style={styles.row}>                          
-                        <Swiper loop={false} >    
-                            {categories.map( category => (
-                                <CategoriesCard onEdit={editCategory} onDelete={deleteCategory} key={category.id} category={category}/>
-                            ))}
-                        </Swiper>
-                    </View>
+                        <View style={styles.row}>    
+                                <Swiper 
+                                    loop={false} 
+                                    showsPagination={false}
+                                >    
+                                    {categories.map( category => (
+                                        <CategoriesCard onEdit={editCategory} onDelete={deleteCategory} key={category.id} category={category}/>
+                                    ))}
+                                </Swiper>
+                        </View>
                 )}
-            </View>      
+            </ScrollView>      
         </>
     );
 }

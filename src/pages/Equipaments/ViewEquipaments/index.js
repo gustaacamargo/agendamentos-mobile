@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Alert, View, StatusBar, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Alert, View, StatusBar, StyleSheet, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
 import Swiper from 'react-native-swiper';
 import api from '../../../services/api';
 import EquipamentsCard from "../../../components/EquipamentsCard";
@@ -7,27 +7,35 @@ import EquipamentsCard from "../../../components/EquipamentsCard";
 function ViewEquipaments() {
     const [equipaments, setEquipaments] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [modified, setModified] = useState(false);
     const [showApp, setShowApp] = useState(false);
 
+    const onRefresh = useCallback(() => {
+        setIsRefreshing(true);
+        retrieveEquipaments();
+        setIsRefreshing(false);
+        
+    }, [isRefreshing]);
+
     useEffect(() => {
         setIsLoading(true);  
-        
-        async function retrieveEquipaments() {
-            await api.get("/equipaments")
-            .then(function (response) {
-                setEquipaments(response.data);
-            })
-            .catch(function (error) {
-                console.log(error)
-                Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
-            });
-            setIsLoading(false);   
-            setShowApp(true);    
-        }  
-
         retrieveEquipaments();
+
     }, [modified]);
+
+    async function retrieveEquipaments() {
+        await api.get("/equipaments")
+        .then(function (response) {
+            setEquipaments(response.data);
+        })
+        .catch(function (error) {
+            console.log(error)
+            Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
+        });
+        setIsLoading(false);   
+        setShowApp(true);    
+    }  
 
     async function deleteEquipament(id) {
         await api.delete(`/equipaments/${id}`)
@@ -61,7 +69,12 @@ function ViewEquipaments() {
     return(
         <>
             <StatusBar barStyle="light-content"/>
-            <View style={styles.main}>
+            <ScrollView 
+                contentContainerStyle={styles.main}
+                refreshControl={
+                    <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+                }
+            >
                 { isLoading && (
                     <View style={styles.loading}>
                         <ActivityIndicator size="large" color="#FFF" />    
@@ -70,14 +83,17 @@ function ViewEquipaments() {
                 
                 {showApp && (
                     <View style={styles.row}>                          
-                        <Swiper loop={false} >    
+                        <Swiper 
+                            loop={false} 
+                            showsPagination={false}
+                        >    
                             {equipaments.map( equipament => (
                                 <EquipamentsCard onEdit={editEquipament} onDelete={deleteEquipament} key={equipament.id} equipament={equipament}/>
                             ))}
                         </Swiper>
                     </View>
                 )}
-            </View>      
+            </ScrollView>      
         </>
     );
 }

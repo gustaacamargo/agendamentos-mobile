@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Alert, View, Text, TextInput, StatusBar, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Alert, View, Text, TextInput, StatusBar, RefreshControl, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import Swiper from 'react-native-swiper';
 import api from '../../../services/api';
 import dateFnsFormat from 'date-fns/format';
@@ -13,12 +13,20 @@ function ViewSchedule({ navigation }) {
     const [schedules, setSchedules] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingBt, setIsLoadingBt] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [showApp, setShowApp] = useState(false);
     const [date, setDate] = useState('');
     const [periods, setPeriods] = useState([{id: "Manha", name: "Manhã"}, 
                                             {id: "Tarde", name: "Tarde"}, 
                                             {id: "Noite", name: "Noite"}]);
     const [period, setPeriod] = useState('');
+
+    const onRefresh = useCallback(() => {
+        setIsRefreshing(true);
+        filter();
+        setIsRefreshing(false);
+        
+    }, [isRefreshing]);
 
     useEffect(() => {
         setIsLoading(true);        
@@ -69,7 +77,7 @@ function ViewSchedule({ navigation }) {
     }
 
     async function filter() {
-
+        
         if(date && period) {
             if((formatDate(date) !== false)){
                 
@@ -96,12 +104,18 @@ function ViewSchedule({ navigation }) {
         else {
             Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
         }
+        setIsRefreshing(false);
     }
 
     return(
         <>
             <StatusBar barStyle="light-content"/>
-            <View style={styles.main}>
+            <ScrollView 
+                contentContainerStyle={styles.main}
+                refreshControl={
+                    <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+                }
+            >
                 { isLoading && (
                     <View style={styles.loading}>
                         <ActivityIndicator size="large" color="#FFF" />    
@@ -157,7 +171,7 @@ function ViewSchedule({ navigation }) {
                                 </View>
                             </Swiper>
                             
-                            <Swiper loop={false} >    
+                            <Swiper loop={false} showsPagination={false}>    
                                 {schedules.map( schedule => (
                                     <SchedulesCard onEdit={editSchedule} onDelete={deleteSchedule} key={schedule.id} schedule={schedule}/>
                                 ))}
@@ -165,7 +179,7 @@ function ViewSchedule({ navigation }) {
                         </Swiper>
                     </View>
                 )}
-            </View>      
+            </ScrollView>      
         </>
     );
 }
