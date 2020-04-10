@@ -19,6 +19,8 @@ import ViewEquipaments from './pages/Equipaments/ViewEquipaments';
 import NewEquipaments from './pages/Equipaments/NewEquipaments';
 import ViewPlaces from './pages/Places/ViewPlaces';
 import NewPlaces from './pages/Places/NewPlaces';
+import ViewUsers from './pages/Users/ViewUsers';
+import NewUsers from './pages/Users/NewUsers';
 import CustomDrawer from './components/CustomDrawer';
 
 const StackLogin = createStackNavigator({
@@ -493,6 +495,83 @@ const PlacesTabs = createBottomTabNavigator({
         }
 });
 
+const StackViewUsers = createStackNavigator({
+    Visualizar: {
+        screen: ViewUsers,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Usuários',
+            headerLeft: () =>
+                <TouchableOpacity onPress={() => navigation.toggleDrawer()} >
+                    <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 5}} color="#FFF"/>
+                </TouchableOpacity>
+            
+        })
+    },
+    }, {
+    defaultNavigationOptions: {
+        headerTintColor: '#FFF',
+        headerBackTitleVisible: false,
+        headerStyle: {
+            backgroundColor: '#042963'
+        }
+        
+    }
+});
+
+const StackNewUsers = createStackNavigator({
+    NewUsers: {
+        screen: NewUsers,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Usuários',
+            headerLeft: () =>
+                <TouchableOpacity onPress={() => navigation.toggleDrawer()} >
+                    <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 5}} color="#FFF"/>
+                </TouchableOpacity>
+            
+        })
+    },
+    }, {
+    defaultNavigationOptions: {
+        headerTintColor: '#FFF',
+        headerBackTitleVisible: false,
+        headerStyle: {
+            backgroundColor: '#042963'
+        }
+        
+    }
+});
+
+const UsersTabs = createBottomTabNavigator({
+        Novo: StackNewUsers,
+        Visualizar: StackViewUsers
+    }, {
+        defaultNavigationOptions: ({ navigation }) => ({
+            tabBarIcon: ({ tintColor }) => {
+                let { routeName } = navigation.state;
+                
+                let iconName;
+                if(routeName === 'Novo') {
+                    iconName = 'add';
+                }
+                else if(routeName === 'Visualizar') {
+                    iconName = 'list';
+                }
+                return (
+                    <MaterialIcons 
+                        name={`${iconName}`} 
+                        style={{fontSize: 30}} 
+                        color="#FFF"/>
+                );
+            }
+        }),
+        tabBarOptions: {
+            activeBackgroundColor: '#042963',
+            inactiveBackgroundColor: '#042963',
+            activeTintColor: 'white',
+            inactiveTintColor: 'gray'
+        }
+});
+
 const Drawer = createDrawerNavigator({
     Agendamentos: {
         screen: SchedulesTabs,
@@ -511,7 +590,10 @@ const Drawer = createDrawerNavigator({
     },
     Salas: {
         screen: PlacesTabs,
-    }
+    },
+    Usuarios: {
+        screen: UsersTabs,
+    },
 }, {
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
