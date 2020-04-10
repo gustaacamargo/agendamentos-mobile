@@ -13,17 +13,17 @@ function Login( {navigation} ) {
 
     useEffect(() => {
         setIsLoading(true);
-        async function isLogged() {
-            const token = await AsyncStorage.getItem('@AgendamentosApp:token');
-  
-            if (token) {
-                navigation.navigate('App');
-            }
-        }
-
         isLogged();
         setIsLoading(false);
     }, []);
+
+    async function isLogged() {
+        const token = await AsyncStorage.getItem('@AgendamentosApp:token');
+
+        if (token) {
+            navigation.navigate('App');
+        }
+    }
 
     async function onLogin() {
         if (!username || !password) {

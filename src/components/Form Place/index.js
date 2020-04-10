@@ -1,29 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import Select2 from "react-native-select-two";
 import api from '../../services/api';
+import { formatDate } from '../../utils/formatDate';
+import { isHourValid } from '../../utils/isHourValid';
+import { returnDateFormatted } from '../../utils/returnDateFormatted';
 
-function FormCourse({ onSubmit, course }) {
+function FormPlace({ onSubmit, place }) {
 
     const [name, setName] = useState('');
+    const [capacity, setCapacity] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        if(course !== ''){
-            setName(course.name);
+        if(place !== ''){
+            setName(place.name);
+            setCapacity(place.capacity);
         }
     }, []);
 
     async function save() {        
-        if(name) {
+        if(name && capacity) {
             setIsLoading(true);
             const userLogged = await api.get('/userLogged');
-            await onSubmit(course.id, {
+            await onSubmit(place.id, {
                 name,
+                capacity,
                 status: 'Ativo',
                 campus_id: userLogged.data.campus.id,
             });
             setIsLoading(false);
             setName('');
+            setCapacity('');
         }
         else {
             Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
@@ -41,6 +49,19 @@ function FormCourse({ onSubmit, course }) {
                         placeholder="Nome"
                         value={name}
                         onChangeText={setName}
+                    />
+                </View>
+            </View>
+
+            <View style={styles.row}>
+                <View style={styles.card}>
+                    <Text style={styles.titleText}>Capacidade</Text>
+                    <TextInput 
+                        keyboardType="numbers-and-punctuation" 
+                        style={styles.input} 
+                        placeholder="Capacidade"
+                        value={capacity}
+                        onChangeText={setCapacity}
                     />
                 </View>
             </View>
@@ -112,4 +133,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default FormCourse;
+export default FormPlace;

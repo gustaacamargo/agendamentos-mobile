@@ -19,8 +19,8 @@ function FormEquipament({ onSubmit, equipament }) {
 
     async function save() {        
         if(name && brand && equityNumber) {
-            const userLogged = await api.get('/userLogged');
             setIsLoading(true);
+            const userLogged = await api.get('/userLogged');
             await onSubmit(equipament.id, {
                 name,
                 brand,

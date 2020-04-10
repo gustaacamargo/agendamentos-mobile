@@ -64,6 +64,10 @@ function CustomDrawer({ navigation }) {
                             <MaterialIcons name="computer" style={{fontSize: 20, marginRight: 5}} color="#000"/>
                             <Text style={styles.options}>Equipamentos</Text>
                         </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonOption} onPress={() => navigateOption('Salas')}>
+                            <MaterialIcons name="place" style={{fontSize: 20, marginRight: 5}} color="#000"/>
+                            <Text style={styles.options}>Salas</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity style={styles.buttonOption} onPress={() => logout()}>
                             <FontAwesome name="sign-out" style={{fontSize: 20, marginRight: 5}} color="#000"/>
                             <Text style={styles.options}>Sair</Text>

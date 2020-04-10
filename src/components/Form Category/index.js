@@ -18,9 +18,9 @@ function FormCategory({ onSubmit, category }) {
     }, []);
 
     async function save() {        
-        const userLogged = await api.get('/userLogged');
         if(description) {
             setIsLoading(true);
+            const userLogged = await api.get('/userLogged');
             await onSubmit(category.id, {
                 description,
                 status: 'Ativo',
