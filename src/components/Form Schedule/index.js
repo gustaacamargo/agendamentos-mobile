@@ -85,56 +85,16 @@ function FormSchedule({ onSubmit, schedule }) {
                         setPlaces(response.data.avaibilityPlaces);   
                         lenghtPlaces = response.data.avaibilityPlaces.length;  
                     }
-
+                    retrieveData(lenghtPlaces);
+                    
                 })
                 .catch(function (error) {
                     console.log(error);
                     
-                    Alert.alert('Erro', 'Houve um erro ao tentar visualizar as informações');
+                    Alert.alert('Erro', error.response.data.error);
                 });
 
-                if(lenghtPlaces > 0) {
-                    let array;
-                    if(userLogged.function === 'adm') {                
-                        const responseUsers = await api.get("/users");
-
-                        const usersReceived = responseUsers.data.filter((elem) => {
-                            return elem.status === 'Ativo';
-                        });
-
-                        array = usersReceived;
-                        array.forEach(user => {
-                            user["name"] = user["fullname"];
-                        });
-                        setUsers(array);     
-                    }
-                    else {
-                        userLogged["name"] = userLogged["fullname"];
-                        setUsers([userLogged]);
-                    }         
-
-                    const responseCategories = await api.get("/categories");
-                    const categoriesReceived = responseCategories.data.filter((elem) => {
-                        return elem.status === 'Ativo';
-                    });
-                    array = categoriesReceived;
-                    array.forEach(category => {
-                        category["name"] = category["description"];
-                    });
-                    setCategories(array);             
-                    
-                    const responseCourses = await api.get("/courses");
-                    const coursesReceived = responseCourses.data.filter((elem) => {
-                        return elem.status === 'Ativo';
-                    });
-                    setCourses(coursesReceived); 
-
-                    setLocked(false);
-                    setShowFields(true);
-                }
-                else {                
-                    Alert.alert("Sem salas para o horário solicitado", "Não há mais disponibilidade de salas para este horário!");
-                }
+                
             }
             else {
                 Alert.alert('Horário ou data inválida', 'Por favor, reveja os dados inseridos e tente novamente!');           
@@ -143,6 +103,51 @@ function FormSchedule({ onSubmit, schedule }) {
         }
         else {
             Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
+        }
+    }
+
+    async function retrieveData(lenghtPlaces) {
+        if(lenghtPlaces > 0) {
+            let array;
+            if(userLogged.function === 'adm') {                
+                const responseUsers = await api.get("/users");
+
+                const usersReceived = responseUsers.data.filter((elem) => {
+                    return elem.status === 'Ativo';
+                });
+
+                array = usersReceived;
+                array.forEach(user => {
+                    user["name"] = user["fullname"];
+                });
+                setUsers(array);     
+            }
+            else {
+                userLogged["name"] = userLogged["fullname"];
+                setUsers([userLogged]);
+            }         
+
+            const responseCategories = await api.get("/categories");
+            const categoriesReceived = responseCategories.data.filter((elem) => {
+                return elem.status === 'Ativo';
+            });
+            array = categoriesReceived;
+            array.forEach(category => {
+                category["name"] = category["description"];
+            });
+            setCategories(array);             
+            
+            const responseCourses = await api.get("/courses");
+            const coursesReceived = responseCourses.data.filter((elem) => {
+                return elem.status === 'Ativo';
+            });
+            setCourses(coursesReceived); 
+
+            setLocked(false);
+            setShowFields(true);
+        }
+        else {                
+            Alert.alert("Sem salas para o horário solicitado", "Não há mais disponibilidade de salas para este horário!");
         }
     }
 
