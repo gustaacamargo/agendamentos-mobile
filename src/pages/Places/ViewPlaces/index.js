@@ -68,7 +68,7 @@ function ViewPlaces() {
 
     return(
         <>
-            <StatusBar barStyle="light-content"/>
+            <StatusBar backgroundColor="#042963" barStyle="light-content"/>
             <ScrollView 
                 contentContainerStyle={styles.main}
                 refreshControl={
@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
         padding: 10,
     }, 
     row: {
+        flex: 1,
         flexDirection: 'row',
     },   
 });

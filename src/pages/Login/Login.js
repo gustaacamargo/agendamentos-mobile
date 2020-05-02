@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, ActivityIndicator, AsyncStorage } from 'react-native';
+import { View, Text, TextInput, StatusBar, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, ActivityIndicator, AsyncStorage } from 'react-native';
 import DismissKeyboard from '../../utils/dismissKeyboard';
 import Logo from '../../../assets/logo.png';
 import api from '../../services/api';
@@ -51,6 +51,7 @@ function Login( {navigation} ) {
     return(
         <DismissKeyboard>
             <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+                <StatusBar backgroundColor="#F5F5F5" barStyle="dark-content"/>
                 <Image style={styles.logo} source={Logo} resizeMode="contain"/>
                 {(error) && <Text style={styles.errorText}>{error}</Text>}
                 <TextInput 

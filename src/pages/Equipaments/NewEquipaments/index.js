@@ -20,7 +20,7 @@ function NewEquipaments() {
     return(
         <DismissKeyboard>
             <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-                <StatusBar barStyle="light-content"/>
+                <StatusBar backgroundColor="#042963" barStyle="light-content"/>
                 <FormEquipament onSubmit={save} equipament={''}/>
             </KeyboardAvoidingView>
         </DismissKeyboard>

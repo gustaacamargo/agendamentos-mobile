@@ -21,7 +21,7 @@ function NewSchedule({ navigation }) {
     return(
         <DismissKeyboard>
             <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-                <StatusBar barStyle="light-content"/>
+                <StatusBar backgroundColor="#042963" barStyle="light-content"/>
                 <FormSchedule onSubmit={save} schedule={''}/>
             </KeyboardAvoidingView>
         </DismissKeyboard>

@@ -109,7 +109,7 @@ function ViewSchedule({ navigation }) {
 
     return(
         <>
-            <StatusBar barStyle="light-content"/>
+            <StatusBar backgroundColor="#042963" barStyle="light-content"/>
             <ScrollView 
                 contentContainerStyle={styles.main}
                 refreshControl={
@@ -218,6 +218,7 @@ const styles = StyleSheet.create({
         marginLeft: 5
     },  
     row: {
+        flex: 1,
         flexDirection: 'row',
     },  
     buttonsGroup: {

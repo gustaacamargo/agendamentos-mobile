@@ -27,7 +27,7 @@
     "react-native-safe-area-context": "0.6.0",
     "react-native-screens": "2.0.0-alpha.12",
     "react-native-select-two": "^1.1.0",
-    "react-native-swiper": "^1.5.14",
+    "react-native-swiper": "^1.6.0-nightly.5",
     "react-native-vector-icons": "^6.6.0",
     "react-native-web": "~0.11.7",
     "react-navigation": "^4.3.3",
