@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StatusBar, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, ActivityIndicator, AsyncStorage } from 'react-native';
+import { View, Text, TextInput, StatusBar, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, ActivityIndicator, AsyncStorage, ImageBackground } from 'react-native';
 import DismissKeyboard from '../../utils/dismissKeyboard';
 import Logo from '../../../assets/logo.png';
 import api from '../../services/api';
@@ -49,39 +49,42 @@ function Login( {navigation} ) {
     }
 
     return(
-        <DismissKeyboard>
-            <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
-                <StatusBar backgroundColor="#F5F5F5" barStyle="dark-content"/>
-                <Image style={styles.logo} source={Logo} resizeMode="contain"/>
-                {(error) && <Text style={styles.errorText}>{error}</Text>}
-                <TextInput 
-                    autoCapitalize="none" 
-                    autoCorrect={false} 
-                    style={styles.input} 
-                    placeholder="Nome de usuário"
-                    value={username}
-                    onChangeText={setUsername}
-                ></TextInput>
-                <TextInput 
-                    autoCapitalize="none" 
-                    autoCorrect={false} 
-                    secureTextEntry 
-                    style={styles.input} 
-                    placeholder="Senha"
-                    value={password}
-                    onChangeText={setPassword}
-                ></TextInput>
-                <TouchableOpacity onPress={onLogin} style={styles.button}>
-                    <Text style={styles.buttonText}>Login</Text>
-                </TouchableOpacity>
+        <ImageBackground source={require("../../../assets/background.png")} style={{ flex: 1 }} imageStyle={{ resizeMode: "cover", flex: 1 }}>
+            <DismissKeyboard>
+                <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
 
-                { isLoading && (
-                <View style={styles.loading}>
-                    <ActivityIndicator size="large" color="#FFF" />    
-                </View>)}
+                    <StatusBar backgroundColor="#F5F5F5" barStyle="dark-content"/>
+                    <Image style={styles.logo} source={Logo} resizeMode="contain"/>
+                    {(error) && <Text style={styles.errorText}>{error}</Text>}
+                    <TextInput 
+                        autoCapitalize="none" 
+                        autoCorrect={false} 
+                        style={styles.input} 
+                        placeholder="Nome de usuário"
+                        value={username}
+                        onChangeText={setUsername}
+                    ></TextInput>
+                    <TextInput 
+                        autoCapitalize="none" 
+                        autoCorrect={false} 
+                        secureTextEntry 
+                        style={styles.input} 
+                        placeholder="Senha"
+                        value={password}
+                        onChangeText={setPassword}
+                    ></TextInput>
+                    <TouchableOpacity onPress={onLogin} style={styles.button}>
+                        <Text style={styles.buttonText}>Login</Text>
+                    </TouchableOpacity>
 
-            </KeyboardAvoidingView>
-        </DismissKeyboard>
+                    { isLoading && (
+                    <View style={styles.loading}>
+                        <ActivityIndicator size="large" color="#FFF" />    
+                    </View>)}
+                </KeyboardAvoidingView>
+            </DismissKeyboard>
+        </ImageBackground>
+
     );
 }
 
@@ -97,7 +100,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#F5F5F5',
     },
     logo: {
         height: '40%',
