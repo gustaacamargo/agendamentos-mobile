@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, AsyncStorage } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, AsyncStorage, ImageBackground } from 'react-native';
 import { FontAwesome, MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import Logo from '../../../assets/logo.png';
 import api from '../../services/api';
+import { screenFont, screenHeight } from '../../constants/screen';
 
 function CustomDrawer({ navigation }) {
 
@@ -36,10 +37,10 @@ function CustomDrawer({ navigation }) {
     return(
         <>
             <View style={styles.container}>
-                <View style={{ backgroundColor: '#0d1624', width: undefined, padding: 15, paddingTop: 40 }}> 
+                <ImageBackground blurRadius={25} source={require("../../../assets/background.png")} imageStyle={{ resizeMode: "cover" }} style={{ backgroundColor: '#0d1624', flexDirection: 'column', justifyContent: 'center', width: undefined, padding: 15, paddingTop: 40, height: screenHeight * 0.15 }}> 
                     <Text style={styles.nameUser}>{user.fullname}</Text>
                     <Text style={styles.campusName}>{`Campus de ${campus.city}`}</Text>
-                </View>
+                </ImageBackground>
 
                 {(adm) ? (
                     <View style={styles.userArea}>
@@ -118,16 +119,16 @@ const styles = StyleSheet.create({
     campusName: {
         marginTop: 5,
         fontSize: 13,
-        color: 'rgba(255, 255, 255, 0.8)',
+        color: '#F0F0F0',
         marginRight: 4
     },
     buttonOption: {
-        marginBottom: 16,
+        marginBottom: 25,
         flexDirection: "row",
         alignItems: 'center',
     },
     options: {
-        fontSize: 15,
+        fontSize: screenFont * 1.3,
         fontWeight: '700'
     }
 });
