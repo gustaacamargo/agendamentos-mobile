@@ -157,7 +157,8 @@ function FormSchedule({ onSubmit, schedule }) {
 
             const response = await api.get('/userLogged');
             if(isUser){
-                requestingUser = userLogged.id;
+                setRequestingUser(userLogged.id)
+                // requestingUser = userLogged.id;
             }
 
             await onSubmit(schedule.id, {

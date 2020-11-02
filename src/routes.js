@@ -23,6 +23,16 @@ import ViewUsers from './pages/Users/ViewUsers';
 import NewUsers from './pages/Users/NewUsers';
 import CustomDrawer from './components/CustomDrawer';
 
+const headerOptions = {
+    shadowRadius: 0,
+    shadowOffset: {
+        height: 0,
+    },
+    elevation: 0,
+    shadowColor: 'transparent',
+    backgroundColor: '#042963'
+}
+
 const StackLogin = createStackNavigator({
         Login: {
             screen: Login,
@@ -49,9 +59,7 @@ const StackViewSchedules = createStackNavigator({
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
         headerBackTitleVisible: false,
-        headerStyle: {
-            backgroundColor: '#042963'
-        }
+        headerStyle: headerOptions
         
     }
 });
@@ -72,9 +80,7 @@ const StackNewSchedules = createStackNavigator({
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
         headerBackTitleVisible: false,
-        headerStyle: {
-            backgroundColor: '#042963'
-        }
+        headerStyle: headerOptions
         
     }
 });
@@ -126,9 +132,7 @@ const StackViewCategories = createStackNavigator({
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
         headerBackTitleVisible: false,
-        headerStyle: {
-            backgroundColor: '#042963'
-        }
+        headerStyle: headerOptions
         
     }
 });
@@ -149,9 +153,7 @@ const StackNewCategories = createStackNavigator({
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
         headerBackTitleVisible: false,
-        headerStyle: {
-            backgroundColor: '#042963'
-        }
+        headerStyle: headerOptions
         
     }
 });
@@ -203,9 +205,7 @@ const StackViewCourses = createStackNavigator({
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
         headerBackTitleVisible: false,
-        headerStyle: {
-            backgroundColor: '#042963'
-        }
+        headerStyle: headerOptions
         
     }
 });
@@ -226,9 +226,7 @@ const StackNewCourses = createStackNavigator({
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
         headerBackTitleVisible: false,
-        headerStyle: {
-            backgroundColor: '#042963'
-        }
+        headerStyle: headerOptions
         
     }
 });
@@ -280,9 +278,7 @@ const StackViewCampus = createStackNavigator({
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
         headerBackTitleVisible: false,
-        headerStyle: {
-            backgroundColor: '#042963'
-        }
+        headerStyle: headerOptions
         
     }
 });
@@ -303,9 +299,7 @@ const StackNewCampus = createStackNavigator({
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
         headerBackTitleVisible: false,
-        headerStyle: {
-            backgroundColor: '#042963'
-        }
+        headerStyle: headerOptions
         
     }
 });
@@ -357,9 +351,7 @@ const StackViewEquipaments = createStackNavigator({
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
         headerBackTitleVisible: false,
-        headerStyle: {
-            backgroundColor: '#042963'
-        }
+        headerStyle: headerOptions
         
     }
 });
@@ -380,9 +372,7 @@ const StackNewEquipaments = createStackNavigator({
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
         headerBackTitleVisible: false,
-        headerStyle: {
-            backgroundColor: '#042963'
-        }
+        headerStyle: headerOptions
         
     }
 });
@@ -434,9 +424,7 @@ const StackViewPlaces = createStackNavigator({
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
         headerBackTitleVisible: false,
-        headerStyle: {
-            backgroundColor: '#042963'
-        }
+        headerStyle: headerOptions
         
     }
 });
@@ -457,9 +445,7 @@ const StackNewPlaces = createStackNavigator({
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
         headerBackTitleVisible: false,
-        headerStyle: {
-            backgroundColor: '#042963'
-        }
+        headerStyle: headerOptions
         
     }
 });
@@ -511,9 +497,7 @@ const StackViewUsers = createStackNavigator({
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
         headerBackTitleVisible: false,
-        headerStyle: {
-            backgroundColor: '#042963'
-        }
+        headerStyle: headerOptions
         
     }
 });
@@ -534,9 +518,7 @@ const StackNewUsers = createStackNavigator({
     defaultNavigationOptions: {
         headerTintColor: '#FFF',
         headerBackTitleVisible: false,
-        headerStyle: {
-            backgroundColor: '#042963'
-        }
+        headerStyle: headerOptions
         
     }
 });
