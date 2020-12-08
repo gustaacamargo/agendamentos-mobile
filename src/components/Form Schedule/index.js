@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { styles } from './styles'
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import Select2 from "react-native-select-two";
 import api from '../../services/api';
 import { formatDate } from '../../utils/formatDate';
 import { isHourValid } from '../../utils/isHourValid';
 import { returnDateFormatted } from '../../utils/returnDateFormatted';
+import moment from 'moment';
+import { useStore } from "../../reducer";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 function FormSchedule({ onSubmit, schedule }) {
+    const { userLogged: { userLogged } } = useStore()
 
-    const [date, setDate] = useState('');
-    const [final, setFinal] = useState('');
-    const [initial, setInitial] = useState('');
+    const [date, setDate] = useState(moment().format('DD/MM/YYYY'));
+    const [final, setFinal] = useState(moment().format('HH:mm'));
+    const [initial, setInitial] = useState(moment().format('HH:mm'));
     const [comments, setComments] = useState('');
 
     const [course, setCourse] = useState('');
@@ -25,27 +31,40 @@ function FormSchedule({ onSubmit, schedule }) {
     const [equipaments, setEquipaments] = useState([]);
     const [users, setUsers] = useState([]);
 
-    const [isUser, setIsUser] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [showFields, setShowFields] = useState(false);
-    const [userLogged, setUserLogged] = useState([]);
 
     const [locked, setLocked] = useState(true);
+    const [typeModal, setTypeModal] = useState('date');
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [nameOfSelectedDate, setNameOfSelectedDate] = useState('date');
+
+    const showDatePicker = (type, name) => {
+        setTypeModal(type);
+        setNameOfSelectedDate(name);
+        setDatePickerVisibility(true);
+    };
+
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false);
+    };
+
+    const handleConfirm = (date) => {
+        hideDatePicker();
+        setTimeDate(typeModal, nameOfSelectedDate, date);
+    };
+
+    function setTimeDate(typeModal, nameOfSelectedDate, date) {
+        let dateReturned;
+        if(typeModal == 'time') { dateReturned = moment(date).format('HH:mm') }
+        else { dateReturned = moment(date).format('DD/MM/YYYY'); }
+
+        if(nameOfSelectedDate == 'date') { setDate(dateReturned) }
+        else if(nameOfSelectedDate == 'initial') { setInitial(dateReturned) }
+        else if(nameOfSelectedDate == 'final') { setFinal(dateReturned) }
+    }
 
     useEffect(() => {
-        async function getUser() {
-            const response = await api.get('/userLogged');
-            setUserLogged(response.data.user);
-            if(response.data.user.function === 'user') {
-                setIsUser(true);
-            }
-            else {
-                setIsUser(false);
-            }
-        }
-
-        getUser();
-
         if(schedule !== ''){            
             setDate(returnDateFormatted(schedule.date));
             setEquipaments(schedule.equipaments);
@@ -57,49 +76,41 @@ function FormSchedule({ onSubmit, schedule }) {
             setRequestingUser(schedule.requesting_user);
             setComments(schedule.comments);
         }
-
     }, []);
 
-    async function disponibilty() {        
+    async function disponibilty() {     
         if(date && initial && final) {
             setIsLoading(true);
 
-            if(isHourValid(initial) && isHourValid(final) && (formatDate(date) !== false)) {
-                let lenghtPlaces = 0;
-                await api.get("/availability", {
-                    headers: { 
-                        initial: initial,
-                        final: final,
-                        date_a: formatDate(date), 
-                        status: 'Confirmado'
-                    },
-                })
-                .then(function (response) {
-                    if(schedule !== ''){                    
-                        setEquipaments([...equipaments, ...response.data.avaibilityEquipaments]);
-                        setPlaces([schedule.place, ...response.data.avaibilityPlaces]);
-                        lenghtPlaces = response.data.avaibilityPlaces.length+1; 
-                    }
-                    else {
-                        setEquipaments(response.data.avaibilityEquipaments);
-                        setPlaces(response.data.avaibilityPlaces);   
-                        lenghtPlaces = response.data.avaibilityPlaces.length;  
-                    }
-                    retrieveData(lenghtPlaces);
-                    
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    
-                    Alert.alert('Erro', error.response.data.error);
-                });
-
+            let lenghtPlaces = 0;
+            await api.get("/availability", {
+                headers: { 
+                    initial: initial,
+                    final: final,
+                    date_a: formatDate(date), 
+                    status: 'Confirmado'
+                },
+            })
+            .then(function (response) {
+                if(schedule !== ''){                    
+                    setEquipaments([...equipaments, ...response.data.avaibilityEquipaments]);
+                    setPlaces([schedule.place, ...response.data.avaibilityPlaces]);
+                    lenghtPlaces = response.data.avaibilityPlaces.length+1; 
+                }
+                else {
+                    setEquipaments(response.data.avaibilityEquipaments);
+                    setPlaces(response.data.avaibilityPlaces);   
+                    lenghtPlaces = response.data.avaibilityPlaces.length;  
+                }
+                retrieveData(lenghtPlaces);
                 
-            }
-            else {
-                Alert.alert('Horário ou data inválida', 'Por favor, reveja os dados inseridos e tente novamente!');           
-            }   
-            setIsLoading(false);        
+            })
+            .catch(function (error) {
+                console.log(error);
+                Alert.alert('Erro', error.response.data.error);
+                setIsLoading(false); 
+            });
+               
         }
         else {
             Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
@@ -108,41 +119,51 @@ function FormSchedule({ onSubmit, schedule }) {
 
     async function retrieveData(lenghtPlaces) {
         if(lenghtPlaces > 0) {
-            let array;
-            if(userLogged.function === 'adm') {                
-                const responseUsers = await api.get("/users");
+            if(!userLogged.isUser) {  
+                await api.get('/users')
+                .then(response => {
+                    const usersReceived = response.data.filter((elem) => {
+                        return elem.status === 'Ativo';
+                    });
+                    usersReceived.map(user => {
+                        user.name = user.fullname
+                    })
+                    setUsers(usersReceived);  
+                })
+                .catch(error => {
+                    console.log(error);
+                    Alert.alert('Oops', 'Houve um erro ao recuperar a lista de usuários!');
+                }) 
+            }        
 
-                const usersReceived = responseUsers.data.filter((elem) => {
+            await api.get("/categories")
+            .then(response => {
+                const categoriesReceived = response.data.filter((elem) => {
                     return elem.status === 'Ativo';
                 });
-
-                array = usersReceived;
-                array.forEach(user => {
-                    user["name"] = user["fullname"];
+                categoriesReceived.map(category => {
+                    category.name = category.description
+                })
+                setCategories(categoriesReceived);    
+            })
+            .catch(error => {
+                console.log(error);
+                Alert.alert('Oops', 'Houve um erro ao recuperar a lista de categorias!');
+            });
+                     
+            await api.get("/courses")
+            .then(response => {
+                const coursesReceived = response.data.filter((elem) => {
+                    return elem.status === 'Ativo';
                 });
-                setUsers(array);     
-            }
-            else {
-                userLogged["name"] = userLogged["fullname"];
-                setUsers([userLogged]);
-            }         
+                setCourses(coursesReceived);    
+            })
+            .catch(error => {
+                console.log(error);
+                Alert.alert('Oops', 'Houve um erro ao recuperar a lista de cursos!');
+            });
 
-            const responseCategories = await api.get("/categories");
-            const categoriesReceived = responseCategories.data.filter((elem) => {
-                return elem.status === 'Ativo';
-            });
-            array = categoriesReceived;
-            array.forEach(category => {
-                category["name"] = category["description"];
-            });
-            setCategories(array);             
-            
-            const responseCourses = await api.get("/courses");
-            const coursesReceived = responseCourses.data.filter((elem) => {
-                return elem.status === 'Ativo';
-            });
-            setCourses(coursesReceived); 
-
+            setIsLoading(false); 
             setLocked(false);
             setShowFields(true);
         }
@@ -151,50 +172,53 @@ function FormSchedule({ onSubmit, schedule }) {
         }
     }
 
-    async function save() {        
-        if(typeof course === 'object' && typeof category === 'object' && typeof place === 'object' && typeof requestingUser === 'object' ) {
-            setIsLoading(true);
+    async function save() {      
+        if(!course) { Alert.alert('Campo não preenchido', 'O campo curso deve ser preenchido'); return }  
+        if(!category) { Alert.alert('Campo não preenchido', 'O campo categoria deve ser preenchido'); return }  
+        if(!place) { Alert.alert('Campo não preenchido', 'O campo sala deve ser preenchido'); return }  
+        if(!requestingUser) { Alert.alert('Campo não preenchido', 'O campo solicitante deve ser preenchido'); return }  
 
-            const response = await api.get('/userLogged');
-            if(isUser){
-                setRequestingUser(userLogged.id)
-                // requestingUser = userLogged.id;
-            }
+        setIsLoading(true);
 
-            await onSubmit(schedule.id, {
-                place_id: place[0],
-                category_id: category[0],
-                course_id: course[0],
-                registration_user_id: userLogged.id,
-                requesting_user_id: requestingUser,
-                campus_id: response.data.campus.id,
-                comments,
-                date: formatDate(date),
-                initial,
-                final,
-                equipaments: equipamentsSelected,
-                status: "Confirmado"
-            });
-
-            onClickDateOrHour();
-            setComments('');
-            setDate('');
-            setInitial('');
-            setFinal('');
-            // //controlFields();
-            // //setEquipamentsView('');
-            
-            setEquipaments([]);
-            setEquipamentsSelected([]);
-            setPlace('');
-            setCourse('');
-            setRequestingUser('');
-            setCategory('');
-            setIsLoading(false);
+        if(userLogged.isUser){
+            setRequestingUser(userLogged.id)
         }
-        else {
-            Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
-        }
+
+        await onSubmit(schedule.id, {
+            place_id: place,
+            category_id: category,
+            course_id: course,
+            registration_user_id: userLogged.id,
+            requesting_user_id: requestingUser,
+            campus_id: userLogged.campusId,
+            comments,
+            date: formatDate(date),
+            initial,
+            final,
+            equipaments: equipamentsSelected,
+            status: "Confirmado"
+        })
+        .then(() => {
+            clearFields()
+        })
+        .catch(() => {})
+
+        setIsLoading(false);
+    }
+
+    function clearFields(){
+        onClickDateOrHour();
+        setComments('');
+        setDate('');
+        setInitial('');
+        setFinal('');
+        
+        setEquipaments([]);
+        setEquipamentsSelected([]);
+        setPlace('');
+        setCourse('');
+        setRequestingUser('');
+        setCategory('');
     }
 
     function onClickDateOrHour() {
@@ -202,43 +226,28 @@ function FormSchedule({ onSubmit, schedule }) {
     }
 
     return(
-        <ScrollView >
+        <KeyboardAwareScrollView>
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Data</Text>
-                    <TextInput 
-                        onFocus={onClickDateOrHour}
-                        keyboardType="numbers-and-punctuation" 
-                        style={styles.input} 
-                        placeholder="xx/xx/xxxx"
-                        value={date}
-                        onChangeText={setDate}
-                    />
+                    <Text style={styles.titleText}>Data *</Text>
+                    <TouchableOpacity style={styles.input} onPress={() => {showDatePicker('date', 'date'); onClickDateOrHour()}}>
+                        <Text style={!date && styles.placeholder}>{date || "Data"}</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
             <View style={styles.row}>
                 <View style={styles.cardBetween}>
                     <View style={{flex: 1, marginRight: 2}}>
-                        <Text style={styles.titleText}>Início</Text>
-                        <TextInput 
-                            onFocus={onClickDateOrHour}
-                            keyboardType="numbers-and-punctuation" 
-                            style={styles.input} 
-                            placeholder="hh:mm"
-                            value={initial}
-                            onChangeText={setInitial}
-                        />
+                        <Text style={styles.titleText}>Início *</Text>
+                        <TouchableOpacity style={styles.input} onPress={() => {showDatePicker('time', 'initial'); onClickDateOrHour()}}>
+                            <Text style={!initial && styles.placeholder}>{initial || "Início"}</Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={{flex: 1, marginLeft: 2}}>
-                        <Text style={styles.titleText}>Final</Text>
-                        <TextInput 
-                            onFocus={onClickDateOrHour}
-                            keyboardType="numbers-and-punctuation" 
-                            style={styles.input} 
-                            placeholder="hh:mm"
-                            value={final}
-                            onChangeText={setFinal}
-                        />
+                        <Text style={styles.titleText}>Final *</Text>
+                        <TouchableOpacity style={styles.input} onPress={() => {showDatePicker('time', 'final'); onClickDateOrHour()}}>
+                            <Text style={!final && styles.placeholder}>{final || "Final"}</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
@@ -267,7 +276,7 @@ function FormSchedule({ onSubmit, schedule }) {
                     </View>
                     <View style={styles.row}>
                         <View style={styles.card}>
-                            <Text style={styles.titleText}>Sala</Text>
+                            <Text style={styles.titleText}>Sala *</Text>
                             <Select2
                                 isSelectSingle
                                 style={styles.input}
@@ -277,7 +286,7 @@ function FormSchedule({ onSubmit, schedule }) {
                                 title="Sala"
                                 data={places}
                                 onSelect={data => {
-                                setPlace(data);                                           
+                                    setPlace(data[0]);                                           
                                 }}
                                 cancelButtonText="Cancelar"
                                 selectButtonText="Selecionar"
@@ -287,7 +296,7 @@ function FormSchedule({ onSubmit, schedule }) {
                     </View>
                     <View style={styles.row}>
                         <View style={styles.card}>
-                            <Text style={styles.titleText}>Ano</Text>
+                            <Text style={styles.titleText}>Ano *</Text>
                             <Select2
                                 isSelectSingle
                                 style={styles.input}
@@ -297,7 +306,7 @@ function FormSchedule({ onSubmit, schedule }) {
                                 title="Ano"
                                 data={categories}
                                 onSelect={data => {
-                                setCategory(data);                                           
+                                    setCategory(data[0]);                                           
                                 }}
                                 cancelButtonText="Cancelar"
                                 selectButtonText="Selecionar"
@@ -307,27 +316,33 @@ function FormSchedule({ onSubmit, schedule }) {
                     </View>
                     <View style={styles.row}>
                         <View style={styles.card}>
-                            <Text style={styles.titleText}>Solicitante</Text>
-                            <Select2
-                                isSelectSingle
-                                style={styles.input}
-                                colorTheme="blue"
-                                popupTitle="Selecione um turno"
-                                searchPlaceHolderText="Pesquisar"
-                                title="Solicitante"
-                                data={users}
-                                onSelect={data => {
-                                setRequestingUser(data);                                           
-                                }}
-                                cancelButtonText="Cancelar"
-                                selectButtonText="Selecionar"
-                                listEmptyTitle="Não há nada aqui"
-                            />
+                            <Text style={styles.titleText}>Solicitante *</Text>
+                            {userLogged.isUser ? (
+                                <View style={styles.input}>
+                                    <Text>{userLogged.name}</Text>
+                                </View>
+                            ) : (
+                                <Select2
+                                    isSelectSingle
+                                    style={styles.input}
+                                    colorTheme="blue"
+                                    popupTitle="Selecione um turno"
+                                    searchPlaceHolderText="Pesquisar"
+                                    title="Solicitante"
+                                    data={users}
+                                    onSelect={data => {
+                                        setRequestingUser(data[0]);                                           
+                                    }}
+                                    cancelButtonText="Cancelar"
+                                    selectButtonText="Selecionar"
+                                    listEmptyTitle="Não há nada aqui"
+                                />
+                            )}
                         </View>
                     </View>
                     <View style={styles.row}>
                         <View style={styles.card}>
-                            <Text style={styles.titleText}>Curso</Text>
+                            <Text style={styles.titleText}>Curso *</Text>
                             <Select2
                                 isSelectSingle
                                 style={styles.input}
@@ -337,7 +352,7 @@ function FormSchedule({ onSubmit, schedule }) {
                                 title="Curso"
                                 data={courses}
                                 onSelect={data => {
-                                setCourse(data);                                                                           
+                                    setCourse(data[0]);                                                                           
                                 }}
                                 cancelButtonText="Cancelar"
                                 selectButtonText="Selecionar"
@@ -369,96 +384,22 @@ function FormSchedule({ onSubmit, schedule }) {
                         <Text style={styles.buttonText}>Salvar</Text>
                         <ActivityIndicator animating={isLoading} size="small" color="#FFF" />   
                     </TouchableOpacity>
+
                 </>
             )}
-        </ScrollView>
+            <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode={typeModal}
+                locale="pt_BR"
+                onConfirm={handleConfirm}
+                isDarkModeEnabled={false}
+                onCancel={hideDatePicker}
+                headerTextIOS="Selecionar"
+                cancelTextIOS="Cancelar"
+                confirmTextIOS="Confirmar"
+            />
+        </KeyboardAwareScrollView>
     )
 }
-
-const styles = StyleSheet.create({
-    loading: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.10)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        
-
-    },
-    main: {
-        flex: 1,
-        backgroundColor: '#7c90b1',
-        padding: 10
-    },
-    input: {
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-        borderRadius: 5,
-        backgroundColor: '#F1F1F1',
-        alignSelf: 'stretch',
-        marginTop: 5,
-        fontSize: 16,
-        borderWidth: 0
-    },
-    titleText: {
-        fontSize: 16,
-        color: '#999'
-    },
-    row: {
-        flexDirection: 'row',
-        marginBottom: 10
-    },
-    cardBetween: {
-        flex: 1,
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-        padding: 15,
-        height: 'auto',
-        borderRadius: 4,
-        backgroundColor: '#FFF',
-        marginRight: 5,
-        marginLeft: 5
-    },
-    card: {
-        flex: 1,
-        justifyContent: 'space-between',
-        padding: 15,
-        height: 'auto',
-        borderRadius: 4,
-        backgroundColor: '#FFF',
-        marginRight: 5,
-        marginLeft: 5
-    },
-    cardDisabled: {
-        flex: 1,
-        justifyContent: 'space-between',
-        padding: 15,
-        height: 'auto',
-        borderRadius: 4,
-        backgroundColor: '#CCC',
-        marginRight: 5,
-        marginLeft: 5
-    },
-    button: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-        borderRadius: 5,
-        backgroundColor: '#042963',
-        alignSelf: 'stretch',
-        marginTop: 10,
-        flex: 1,
-        marginRight: 5,
-        marginLeft: 5,
-        marginBottom: 15
-    },
-    buttonText: {
-        color: '#FFF',
-        fontWeight: 'bold',
-        fontSize: 16,
-        textAlign: 'center',
-        marginRight: 5
-    },
-});
 
 export default FormSchedule;

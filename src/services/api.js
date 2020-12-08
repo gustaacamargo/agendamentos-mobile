@@ -2,7 +2,7 @@ import axios from 'axios';
 import { AsyncStorage } from 'react-native';
 
 const api = axios.create({
-  baseURL: 'http://192.168.0.107:3333',
+  baseURL: 'https://sase-agendamentos.herokuapp.com/',
 });
 
 api.interceptors.request.use(async (config) => {

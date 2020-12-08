@@ -1,6 +1,5 @@
 import React from "react";
-import { StatusBar, KeyboardAvoidingView, StyleSheet, Alert } from "react-native";
-import DismissKeyboard from '../../../utils/dismissKeyboard';
+import { KeyboardAvoidingView, StyleSheet, Alert } from "react-native";
 import api from '../../../services/api';
 import FormSchedule from '../../../components/Form Schedule';
 
@@ -19,12 +18,9 @@ function NewSchedule({ navigation }) {
     }
 
     return(
-        <DismissKeyboard>
-            <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-                <StatusBar backgroundColor="#042963" barStyle="light-content"/>
-                <FormSchedule onSubmit={save} schedule={''}/>
-            </KeyboardAvoidingView>
-        </DismissKeyboard>
+        <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
+            <FormSchedule onSubmit={save} schedule={''}/>
+        </KeyboardAvoidingView>
     );
 }
 

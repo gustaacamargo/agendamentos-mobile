@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StatusBar, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, ActivityIndicator, AsyncStorage, ImageBackground } from 'react-native';
+import { View, Text, TextInput, StatusBar, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, ActivityIndicator, AsyncStorage, ImageBackground, Alert } from 'react-native';
 import DismissKeyboard from '../../utils/dismissKeyboard';
 import Logo from '../../../assets/logo.png';
 import api from '../../services/api';
+import { useDispatch } from '../../reducer';
 
 function Login( {navigation} ) {
-
+    const { userLoggedDispatch } = useDispatch()
+ 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
@@ -21,8 +23,29 @@ function Login( {navigation} ) {
         const token = await AsyncStorage.getItem('@AgendamentosApp:token');
 
         if (token) {
-            navigation.navigate('App');
+            getUser()
         }
+    }
+
+    async function getUser() {
+        await api.get('/userLogged')
+        .then(response => {
+            let userLogged = {
+                name: response.data.user.fullname,
+                id: response.data.user.id,
+                email: response.data.user.email,
+                campus: response.data.campus.city,
+                campusId: response.data.campus.id,
+                isUser: response.data.user.function == 'user' ? true : false
+            }
+            
+            userLoggedDispatch.setUserLogged(userLogged)
+            navigation.navigate('App');
+        })
+        .catch(error => {
+            console.log(error);
+            Alert.alert('Oops', 'Houve um erro ao recuperar o usuário logado, tente novamente')
+        })
     }
 
     async function onLogin() {
@@ -31,20 +54,26 @@ function Login( {navigation} ) {
         } else {
             try {
                 setIsLoading(true);
-                
-                const response = await api.post("/sessions", {                     
+                await api.post("/sessions", {                     
                         username, 
                         password                   
-                });  
+                })
+                .then(async response => {
+                    await AsyncStorage.setItem('@AgendamentosApp:token', response.data.token);
+                    setIsLoading(false);
 
-                await AsyncStorage.setItem('@AgendamentosApp:token', response.data.token);
-
-                navigation.navigate('App');
+                    getUser()
+                })  
+                .catch(error => {
+                    console.log(error);
+                    setError("Nome de usuário ou senha incorreta.");
+                    setIsLoading(false);
+                });
             } catch (err) {
+                setIsLoading(false);
                 setError("Nome de usuário ou senha incorreta.");
                 console.log(err);
             }
-            setIsLoading(false);
         }
     }
 
