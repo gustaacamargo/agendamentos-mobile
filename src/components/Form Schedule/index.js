@@ -33,8 +33,6 @@ function FormSchedule({ onSubmit, schedule }) {
 
     const [isLoading, setIsLoading] = useState(false);
     const [showFields, setShowFields] = useState(false);
-
-    const [locked, setLocked] = useState(true);
     const [typeModal, setTypeModal] = useState('date');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [nameOfSelectedDate, setNameOfSelectedDate] = useState('date');
@@ -65,18 +63,28 @@ function FormSchedule({ onSubmit, schedule }) {
     }
 
     useEffect(() => {
-        if(schedule !== ''){            
+        if(schedule){       
             setDate(returnDateFormatted(schedule.date));
-            setEquipaments(schedule.equipaments);
             setInitial(schedule.initial);
             setFinal(schedule.final);
-            setCourse(schedule.course);
-            setCategory(schedule.category);
-            setPlace(schedule.place);
-            setRequestingUser(schedule.requesting_user);
+            setPlace(schedule.place.id)
             setComments(schedule.comments);
+
+            disponibilty()
         }
-    }, []);
+    }, [schedule]);
+
+    function setArrays(array, comp, setter, setterArray) {
+        let a = []
+        array.map(obj => {
+            if(comp == obj.id) {
+                setter(obj.id)
+                obj.checked = true
+            }
+            a.push(obj)
+        })
+        setterArray(a)
+    }
 
     async function disponibilty() {     
         if(date && initial && final) {
@@ -92,9 +100,14 @@ function FormSchedule({ onSubmit, schedule }) {
                 },
             })
             .then(function (response) {
-                if(schedule !== ''){                    
-                    setEquipaments([...equipaments, ...response.data.avaibilityEquipaments]);
-                    setPlaces([schedule.place, ...response.data.avaibilityPlaces]);
+                if(schedule){    
+                    schedule.equipaments.map(obj => {
+                        obj.checked = true
+                        equipamentsSelected.push(obj.id)
+                    })              
+                    setEquipaments([...JSON.parse(JSON.stringify(schedule.equipaments)), ...response.data.avaibilityEquipaments]);
+                    schedule.place.checked = true
+                    setPlaces([JSON.parse(JSON.stringify(schedule.place)), ...response.data.avaibilityPlaces]);
                     lenghtPlaces = response.data.avaibilityPlaces.length+1; 
                 }
                 else {
@@ -128,7 +141,17 @@ function FormSchedule({ onSubmit, schedule }) {
                     usersReceived.map(user => {
                         user.name = user.fullname
                     })
-                    setUsers(usersReceived);  
+                    if(schedule) {
+                        if(!userLogged.isUser) {
+                            setArrays(usersReceived, schedule.requesting_user.id, setRequestingUser, setUsers)
+                        }
+                        else {
+                            setRequestingUser(userLogged.id)
+                        }
+                    }
+                    else {
+                        setUsers(usersReceived);  
+                    }
                 })
                 .catch(error => {
                     console.log(error);
@@ -144,7 +167,13 @@ function FormSchedule({ onSubmit, schedule }) {
                 categoriesReceived.map(category => {
                     category.name = category.description
                 })
-                setCategories(categoriesReceived);    
+
+                if(schedule) {
+                    setArrays(categoriesReceived, schedule.category.id, setCategory, setCategories)
+                }
+                else {
+                    setCategories(categoriesReceived);
+                }  
             })
             .catch(error => {
                 console.log(error);
@@ -156,7 +185,12 @@ function FormSchedule({ onSubmit, schedule }) {
                 const coursesReceived = response.data.filter((elem) => {
                     return elem.status === 'Ativo';
                 });
-                setCourses(coursesReceived);    
+                if(schedule) {
+                    setArrays(coursesReceived, schedule.course.id, setCourse, setCourses)
+                }
+                else {
+                    setCourses(coursesReceived);    
+                }
             })
             .catch(error => {
                 console.log(error);
@@ -164,10 +198,10 @@ function FormSchedule({ onSubmit, schedule }) {
             });
 
             setIsLoading(false); 
-            setLocked(false);
             setShowFields(true);
         }
-        else {                
+        else {       
+            setIsLoading(false);          
             Alert.alert("Sem salas para o horário solicitado", "Não há mais disponibilidade de salas para este horário!");
         }
     }
@@ -184,7 +218,7 @@ function FormSchedule({ onSubmit, schedule }) {
             setRequestingUser(userLogged.id)
         }
 
-        await onSubmit(schedule.id, {
+        await onSubmit(schedule ? schedule.id : undefined, {
             place_id: place,
             category_id: category,
             course_id: course,

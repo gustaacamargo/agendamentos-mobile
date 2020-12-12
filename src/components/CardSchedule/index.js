@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, View, StyleSheet, Alert } from 'react-native'
 import moment from 'moment'
 import { MaterialIcons } from '@expo/vector-icons';
 
-export default function CardSchedule({ isOnModal, onOpen, item, setItem, editSchedule, deleteSchedule }) {
+export default function CardSchedule({ isOnModal, onOpen, item, setItem, editSchedule, deleteSchedule, navigation }) {
 
     async function confirmDelete(id) {
         Alert.alert(
@@ -52,7 +52,7 @@ export default function CardSchedule({ isOnModal, onOpen, item, setItem, editSch
 
                     {(item.status === 'Confirmado') && (
                         <View style={styles.buttonsGroup}>
-                            <TouchableOpacity style={styles.row}>
+                            <TouchableOpacity onPress={() => navigation.navigate('NewSchedules', { schedule: item })} style={styles.row}>
                                 <MaterialIcons name="edit" style={[styles.buttons, { marginLeft: 0 }]} color="#FFF"/>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.row} onPress={() => confirmDelete(item.id)}>

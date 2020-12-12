@@ -7,7 +7,7 @@ import Store from './src/store/reducers/index'
 export default function App() {
   return (
     <StateProvider store={Store}>
-      <StatusBar barStyle="dark-content"/>
+      <StatusBar barStyle="light-content"/>
       <Routes></Routes>
     </StateProvider>
   );

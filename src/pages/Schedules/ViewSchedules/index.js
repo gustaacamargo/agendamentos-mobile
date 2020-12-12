@@ -10,12 +10,13 @@ import moment from 'moment';
 import CardSchedule from '../../../components/CardSchedule';
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { NavigationEvents } from 'react-navigation';
 
 function ViewSchedule({ navigation }) {
     
     const [schedules, setSchedules] = useState([]);
     const [schedule, setSchedule] = useState({})
-    const [isRefreshing, setIsRefreshing] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(true);
     const [date, setDate] = useState('');
     const [periods, setPeriods] = useState([{value: "Manha", label: "Manhã"}, 
                                             {value: "Tarde", label: "Tarde"}, 
@@ -37,10 +38,6 @@ function ViewSchedule({ navigation }) {
     const onRefresh = useCallback(() => {
         filter();
     }, [isRefreshing]);
-
-    useEffect(() => {
-        filter()
-    }, []);
 
     async function deleteSchedule(id) {
         await api.delete(`/schedules/${id}`)
@@ -100,6 +97,7 @@ function ViewSchedule({ navigation }) {
 
     return(
         <View style={{ flex: 1, backgroundColor: '#F0F0F0' }}>
+            <NavigationEvents onDidFocus={payload => filter()} />
             <View style={{ backgroundColor: "#042963", padding: 20, flexDirection: 'row' }}>
                 <TouchableOpacity style={{ backgroundColor: "#FFF", width: screenWidth * 0.369, height: 41, marginRight: 20, paddingLeft: 15, paddingVertical: 13, borderRadius: 11, justifyContent: 'center' }} onPress={() => {setDatePickerVisibility(true)}}>
                     <Text style={!date ? { color: '#ccc' } : { color: '#000' }} >{date || "Data"}</Text>
@@ -118,22 +116,22 @@ function ViewSchedule({ navigation }) {
                     <EvilIcons name="search" size={30} color="white" />
                 </TouchableOpacity>
             </View>
-            {schedules.length <= 0 ? (
+            <FlatList 
+                style={{ paddingTop: 20 }}
+                contentContainerStyle={{ marginHorizontal: 20 }}
+                data={schedules}
+                renderItem={renderCard}
+                keyExtractor={(item, index) => index.toString()}
+                refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+            />
+
+            {schedules.length <= 0 && (
                 <View style={{ alignItems: 'center', marginTop: 50 }}>
                     <Text style={{ color: '#777', fontSize: 16, fontWeight: '500' }}>Nenhum agendamento para este dia</Text>
                 </View>
-            ) : (
-                <FlatList 
-                    style={{ paddingTop: 20 }}
-                    contentContainerStyle={{ marginHorizontal: 20 }}
-                    data={schedules}
-                    renderItem={renderCard}
-                    keyExtractor={(item, index) => index.toString()}
-                    refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
-                />
             )}
             <Modalize adjustToContentHeight={true} ref={modalizeRef}>
-                <CardSchedule isOnModal={true} onOpen={onOpen} item={schedule} setItem={setSchedule} editSchedule={editSchedule} deleteSchedule={deleteSchedule}/>
+                <CardSchedule navigation={navigation} isOnModal={true} onOpen={onOpen} item={schedule} setItem={setSchedule} editSchedule={editSchedule} deleteSchedule={deleteSchedule}/>
             </Modalize>
             <DateTimePickerModal
                 isVisible={isDatePickerVisible}

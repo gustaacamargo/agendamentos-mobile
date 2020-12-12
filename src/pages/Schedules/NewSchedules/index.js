@@ -1,25 +1,47 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { KeyboardAvoidingView, StyleSheet, Alert } from "react-native";
 import api from '../../../services/api';
 import FormSchedule from '../../../components/Form Schedule';
 
 function NewSchedule({ navigation }) {
+    const [schedule, setSchedule] = useState(navigation.getParam('schedule'))
 
-    async function save(id, data) {        
-
-        await api.post("/schedules", data)
-        .then(function (response) {                
-            Alert.alert('Prontinho', 'Agendamento realizado com sucesso!');
+    useEffect(() => {
+        const listener = navigation.addListener('didFocus', () => {
+            setSchedule(navigation.getParam('schedule'))
         })
-        .catch(function (error) {
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
-        });
+
+        return () => {
+            listener.remove()
+        }
+    }, [navigation])
+
+    async function save(id, data) { 
+        if(id) {
+            await api.put(`/schedules/${id}`, data)
+            .then(function (response) {                
+                Alert.alert('Prontinho', 'Agendamento editado com sucesso!');
+            })
+            .catch(function (error) {
+                console.log(error)
+                Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
+            });
+        }    
+        else {
+            await api.post("/schedules", data)
+            .then(function (response) {                
+                Alert.alert('Prontinho', 'Agendamento realizado com sucesso!');
+            })
+            .catch(function (error) {
+                console.log(error)
+                Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
+            });
+        }  
     }
 
     return(
         <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-            <FormSchedule onSubmit={save} schedule={''}/>
+            <FormSchedule onSubmit={save} schedule={navigation.getParam('schedule')}/>
         </KeyboardAvoidingView>
     );
 }
