@@ -14,9 +14,7 @@ function Login( {navigation} ) {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        setIsLoading(true);
         isLogged();
-        setIsLoading(false);
     }, []);
 
     async function isLogged() {
@@ -28,6 +26,7 @@ function Login( {navigation} ) {
     }
 
     async function getUser() {
+        setIsLoading(true);
         await api.get('/userLogged')
         .then(response => {
             let userLogged = {
@@ -41,8 +40,10 @@ function Login( {navigation} ) {
             
             userLoggedDispatch.setUserLogged(userLogged)
             navigation.navigate('App');
+            setIsLoading(false);
         })
         .catch(error => {
+            setIsLoading(false);
             console.log(error);
             Alert.alert('Oops', 'Houve um erro ao recuperar o usuário logado, tente novamente')
         })
