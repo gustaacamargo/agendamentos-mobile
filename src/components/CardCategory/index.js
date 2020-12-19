@@ -31,7 +31,7 @@ export default function CardCategory({ isOnModal, onOpen, item, setItem, edit, d
                 <>
                     {(item.status === 'Ativo') && (
                         <View style={styles.buttonsGroup}>
-                            <TouchableOpacity onPress={() => navigation.navigate('NewCategories', { category: item })} style={styles.row}>
+                            <TouchableOpacity onPress={() => navigation.navigate('EditCategories', { category: item })} style={styles.row}>
                                 <MaterialIcons name="edit" style={[styles.buttons, { marginLeft: 0 }]} color="#FFF"/>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.row} onPress={() => confirmDelete(item.id)}>

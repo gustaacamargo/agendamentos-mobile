@@ -3,26 +3,37 @@ import { StatusBar, KeyboardAvoidingView, StyleSheet, Alert } from "react-native
 import DismissKeyboard from '../../../utils/dismissKeyboard';
 import api from '../../../services/api';
 import FormCategory from '../../../components/Form Category';
+import { Text } from "react-native";
 
-function NewCategories({ navigation }) {
+function EditCategories({ navigation }) {
+    const [category, setCategory] = useState(navigation.getParam('category'))
+
+    useEffect(() => {
+        const listener = navigation.addListener('didFocus', () => {
+            setCategory(navigation.getParam('category'))
+        })
+
+        return () => {
+            listener.remove()
+        }
+    }, [navigation])
     
-    async function save(id, data) {        
-
-        await api.post("/categories", data)
+    async function edit(id, data) {  
+        await api.put("/categories/"+id, data)
         .then(function (response) {                
-            Alert.alert('Prontinho', 'Ano cadastrado com sucesso!');
+            Alert.alert('Prontinho', 'Ano editado com sucesso!');
         })
         .catch(function (error) {
             console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
+            Alert.alert('Oops...', 'Houve um erro ao tentar editar o ano');
         });
     }
 
     return(
         <DismissKeyboard>
             <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-                <StatusBar backgroundColor="#042963" barStyle="light-content"/>
-                <FormCategory onSubmit={save} category={''}/>
+                <Text>aaaa</Text>
+                <FormCategory onSubmit={edit} category={category}/>
             </KeyboardAvoidingView>
         </DismissKeyboard>
     );
@@ -114,4 +125,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default NewCategories;
+export default EditCategories;
