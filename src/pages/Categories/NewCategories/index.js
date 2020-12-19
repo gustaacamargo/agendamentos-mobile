@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StatusBar, KeyboardAvoidingView, StyleSheet, Alert } from "react-native";
 import DismissKeyboard from '../../../utils/dismissKeyboard';
 import api from '../../../services/api';
 import FormCategory from '../../../components/Form Category';
 
-function NewCategories() {
+function NewCategories({ navigation }) {
+    const [category, setCategory] = useState(navigation.getParam('category'))
+
+    useEffect(() => {
+        const listener = navigation.addListener('didFocus', () => {
+            setCategory(navigation.getParam('category'))
+        })
+
+        return () => {
+            listener.remove()
+        }
+    }, [navigation])
+    
     async function save(id, data) {        
 
         await api.post("/categories", data)
@@ -21,7 +33,7 @@ function NewCategories() {
         <DismissKeyboard>
             <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
                 <StatusBar backgroundColor="#042963" barStyle="light-content"/>
-                <FormCategory onSubmit={save} category={''}/>
+                <FormCategory onSubmit={save} category={category}/>
             </KeyboardAvoidingView>
         </DismissKeyboard>
     );

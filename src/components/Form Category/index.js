@@ -1,30 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
-import Select2 from "react-native-select-two";
-import api from '../../services/api';
-import { formatDate } from '../../utils/formatDate';
-import { isHourValid } from '../../utils/isHourValid';
-import { returnDateFormatted } from '../../utils/returnDateFormatted';
+import { useStore } from "../../reducer";
 
 function FormCategory({ onSubmit, category }) {
-
+    const { userLogged: { userLogged } } = useStore()
     const [description, setDescription] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        if(category !== ''){
+        if(category){
             setDescription(category.description);
         }
-    }, []);
+    }, [category]);
 
     async function save() {        
         if(description) {
             setIsLoading(true);
-            const userLogged = await api.get('/userLogged');
             await onSubmit(category.id, {
                 description,
                 status: 'Ativo',
-                campus_id: userLogged.data.campus.id,
+                campus_id: userLogged.campusId,
             });
             setIsLoading(false);
             setDescription('');
