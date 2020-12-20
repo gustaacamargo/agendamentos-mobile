@@ -6,6 +6,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import EditCategories from "../pages/Categories/EditCategories";
 import NewCategories from "../pages/Categories/NewCategories";
 import ViewCategories from "../pages/Categories/ViewCategories";
+import { screenWidth } from '../constants/screen';
 
 const headerOptions = {
     shadowRadius: 0,
@@ -21,18 +22,18 @@ const options = (title, navigation) => ({
     title: title,
     headerLeft: () =>
         <TouchableOpacity onPress={() => navigation.toggleDrawer()} >
-            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 5}} color="#FFF"/>
+            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: screenWidth * 0.04}} color="#FFF"/>
         </TouchableOpacity>
 })
 
 export const StackNewCategories = createStackNavigator({
     NewCategories: {
         screen: NewCategories,
-        navigationOptions: ({ navigation }) => options('Anos', navigation)
+        navigationOptions: ({ navigation }) => options('Novo ano', navigation)
     },
     EditCategories: {
         screen: EditCategories,
-        navigationOptions: ({ navigation }) => options('Anos', navigation)
+        navigationOptions: ({ navigation }) => options('Editar ano', navigation)
     }
 }, {
     initialRouteName: 'NewCategories',
@@ -46,7 +47,7 @@ export const StackNewCategories = createStackNavigator({
 export const StackViewCategories = createStackNavigator({
     ViewCategories: {
         screen: ViewCategories,
-        navigationOptions: ({ navigation }) => options('Anos', navigation)
+        navigationOptions: ({ navigation }) => options('Visualizar anos', navigation)
     },
 }, {
     defaultNavigationOptions: {

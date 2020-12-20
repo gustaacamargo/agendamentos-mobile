@@ -109,8 +109,8 @@ const styles = StyleSheet.create({
         marginHorizontal: 20
     },
     center: { 
+        flex: 1,
         alignItems: 'center', 
-        marginTop: 50 
     },
     txtNothing: { 
         color: '#777', 
