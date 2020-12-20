@@ -33,7 +33,7 @@ function FormCategory({ onSubmit, category }) {
         <ScrollView >
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Descrição</Text>
+                    <Text style={styles.titleText}>Descrição *</Text>
                     <TextInput 
                         keyboardType="default" 
                         style={styles.input} 

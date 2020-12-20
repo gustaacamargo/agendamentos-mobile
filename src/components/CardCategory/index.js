@@ -2,7 +2,7 @@ import React from 'react'
 import { Text, TouchableOpacity, View, StyleSheet, Alert } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons';
 
-export default function CardCategory({ isOnModal, onOpen, item, setItem, edit, deleteCategory, navigation }) {
+export default function CardCategory({ isOnModal, onOpen, item, setItem, deleteCategory, navigation }) {
 
     async function confirmDelete(id) {
         Alert.alert(

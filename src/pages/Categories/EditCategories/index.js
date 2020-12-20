@@ -22,6 +22,7 @@ function EditCategories({ navigation }) {
         await api.put("/categories/"+id, data)
         .then(function (response) {                
             Alert.alert('Prontinho', 'Ano editado com sucesso!');
+            navigation.pop(2)
         })
         .catch(function (error) {
             console.log(error)
@@ -32,7 +33,6 @@ function EditCategories({ navigation }) {
     return(
         <DismissKeyboard>
             <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-                <Text>aaaa</Text>
                 <FormCategory onSubmit={edit} category={category}/>
             </KeyboardAvoidingView>
         </DismissKeyboard>

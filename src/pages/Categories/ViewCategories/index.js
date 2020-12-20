@@ -55,18 +55,6 @@ function ViewCategories({ navigation }) {
         });
     }
 
-    async function editCategory(id, data) {        
-
-        await api.put(`/categories/${id}`, data)
-        .then(function (response) {                
-            Alert.alert('Prontinho', 'Ano editado com sucesso!');
-        })
-        .catch(function (error) {
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar editar o ano');
-        });
-    }
-
     function renderCard({ item }) {
         return(
             <CardCategory isOnModal={false} onOpen={onOpen} item={item} setItem={setCategory}/>
@@ -85,7 +73,7 @@ function ViewCategories({ navigation }) {
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
             <Modalize adjustToContentHeight={true} ref={modalizeRef}>
-                <CardCategory navigation={navigation} isOnModal={true} onOpen={onOpen} item={category} setItem={setCategory} editSchedule={editCategory} deleteCategory={deleteCategory}/>
+                <CardCategory navigation={navigation} isOnModal={true} onOpen={onOpen} item={category} setItem={setCategory} deleteCategory={deleteCategory}/>
             </Modalize>
 
             {categories.length <= 0 && (
