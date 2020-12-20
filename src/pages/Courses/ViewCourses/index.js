@@ -1,120 +1,114 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Alert, View, StatusBar, StyleSheet, ActivityIndicator, RefreshControl, ScrollView } from 'react-native';
-import Swiper from 'react-native-swiper';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Alert, View, StyleSheet, RefreshControl } from 'react-native';
 import api from '../../../services/api';
-import CoursesCard from "../../../components/CoursesCard";
+import { NavigationEvents } from 'react-navigation';
+import { FlatList } from 'react-native';
+import { Modalize } from 'react-native-modalize';
+import { Text } from 'react-native';
+import CardCourse from '../../../components/CardCourse';
 
-function ViewCourses() {
+function ViewCourses({ navigation }) {
     const [courses, setCourses] = useState([]);
+    const [course, setCourse] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [modified, setModified] = useState(false);
-    const [showApp, setShowApp] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false)
+    const modalizeRef = useRef(null);
 
     const onRefresh = useCallback(() => {
-        setIsRefreshing(true);
-        retrieveCourses();
-        setIsRefreshing(false);
-        
+        retrieveCourses();        
     }, [isRefreshing]);
 
-    useEffect(() => {
-        setIsLoading(true);  
-        retrieveCourses();
+    const onOpen = () => {
+        modalizeRef.current?.open();
+    };
 
-    }, [modified]);
+    useEffect(() => {
+        retrieveCourses();
+    }, [course]);
 
     async function retrieveCourses() {
+        setIsRefreshing(true);   
+        setIsLoading(true)
         await api.get("/courses")
         .then(function (response) {
+            setIsLoading(false);  
+            setIsRefreshing(false);  
             setCourses(response.data);
         })
         .catch(function (error) {
+            setIsLoading(false);  
+            setIsRefreshing(false);  
             console.log(error)
             Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
-        });
-        setIsLoading(false);   
-        setShowApp(true);    
+        });   
     }  
 
     async function deleteCourse(id) {
+        setIsDeleting(true)
         await api.delete(`/courses/${id}`)
         .then(function (response) {
+            setCourse({})
+            setIsDeleting(false)
             Alert.alert('Prontinho', 'Curso deletado com sucesso');
-            setModified(true);
         })
         .catch(function (error) {
+            setIsDeleting(false)
             console.log(error)
             Alert.alert('Oops...', 'Houve um tentar visualizar as informações, tente novamente!');
         });
-        setModified(false);
-        setShowApp(false);
     }
 
-    async function editCourse(id, data) {        
-
-        await api.put(`/courses/${id}`, data)
-        .then(function (response) {                
-            Alert.alert('Prontinho', 'Curso editado com sucesso!');
-            setModified(true);
-        })
-        .catch(function (error) {
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar editar o curso');
-        });
-        setModified(false);
-        setShowApp(false);
+    function renderCard({ item }) {
+        return(
+            <CardCourse isOnModal={false} onOpen={onOpen} item={item} setItem={setCourse}/>
+        )
     }
 
     return(
-        <>
-            <StatusBar backgroundColor="#042963" barStyle="light-content"/>
-            <ScrollView 
-                contentContainerStyle={styles.main}
-                refreshControl={
-                    <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-                }
-            >
-                { isLoading && (
-                    <View style={styles.loading}>
-                        <ActivityIndicator size="large" color="#FFF" />    
-                    </View>)
-                }
-                
-                {showApp && (
-                    <View style={styles.row}>                          
-                        <Swiper 
-                            loop={false} 
-                            showsPagination={false}
-                        >    
-                            {courses.map( course => (
-                                <CoursesCard onEdit={editCourse} onDelete={deleteCourse} key={course.id} course={course}/>
-                            ))}
-                        </Swiper>
-                    </View>
-                )}
-            </ScrollView>      
-        </>
+        <View style={styles.main}>
+            <NavigationEvents onDidFocus={payload => retrieveCourses()} />
+            <FlatList 
+                style={styles.pdTop20}
+                contentContainerStyle={styles.mh20}
+                data={courses}
+                renderItem={renderCard}
+                keyExtractor={(item, index) => index.toString()}
+                refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+            />
+            <Modalize adjustToContentHeight={true} ref={modalizeRef}>
+                <CardCourse navigation={navigation} isOnModal={true} onOpen={onOpen} item={course} setItem={setCourse} deleteCourse={deleteCourse} isDeleting={isDeleting}/>
+            </Modalize>
+
+            {courses.length <= 0 && (
+                <View style={styles.center}>
+                    <Text style={styles.txtNothing}>Nenhum curso cadastrado</Text>
+                </View>
+            )}
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    loading: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.8)',
-        justifyContent: 'center',
-        alignItems: 'center'
-
-    },
-    main: { 
+    main: {
         flex: 1, 
-        backgroundColor: '#7c90b1',
-        padding: 10,
-    }, 
-    row: {
+        backgroundColor: '#F0F0F0'
+    },
+    pdTop20: {
+        paddingTop: 20
+    },
+    mh20: {
+        marginHorizontal: 20
+    },
+    center: { 
         flex: 1,
-        flexDirection: 'row',
-    },   
+        alignItems: 'center', 
+    },
+    txtNothing: { 
+        color: '#777', 
+        fontSize: 16, 
+        fontWeight: '500' 
+    }
 });
 
 export default ViewCourses;

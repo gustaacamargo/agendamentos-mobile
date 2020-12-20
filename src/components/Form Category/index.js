@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useStore } from "../../reducer";
 
 function FormCategory({ onSubmit, category }) {
@@ -27,7 +28,7 @@ function FormCategory({ onSubmit, category }) {
     }
 
     return(
-        <ScrollView >
+        <KeyboardAwareScrollView>
             <View style={styles.row}>
                 <View style={styles.card}>
                     <Text style={styles.titleText}>Descrição *</Text>
@@ -46,7 +47,7 @@ function FormCategory({ onSubmit, category }) {
                 <ActivityIndicator animating={isLoading} size="small" color="#FFF" />   
             </TouchableOpacity>
             
-        </ScrollView>
+        </KeyboardAwareScrollView>
     )
 }
 

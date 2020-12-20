@@ -4,6 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import NewCourse from '../pages/Courses/NewCourses';
+import EditCourse from '../pages/Courses/EditCourses';
 import ViewCourse from '../pages/Courses/ViewCourses';
 import { screenWidth } from '../constants/screen';
 
@@ -28,7 +29,11 @@ const options = (title, navigation) => ({
 export const StackNewCourses = createStackNavigator({
     NewCourses: {
         screen: NewCourse,
-        navigationOptions: ({ navigation }) => options('Cursos', navigation)
+        navigationOptions: ({ navigation }) => options('Novo curso', navigation)
+    },
+    EditCourses: {
+        screen: EditCourse,
+        navigationOptions: ({ navigation }) => options('Editar curso', navigation)
     },
 }, {
     defaultNavigationOptions: {
@@ -41,7 +46,7 @@ export const StackNewCourses = createStackNavigator({
 export const StackViewCourses = createStackNavigator({
     ViewCourses: {
         screen: ViewCourse,
-        navigationOptions: ({ navigation }) => options('Cursos', navigation)
+        navigationOptions: ({ navigation }) => options('Visualizar cursos', navigation)
     },
 }, {
     defaultNavigationOptions: {

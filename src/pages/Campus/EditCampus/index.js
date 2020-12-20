@@ -23,6 +23,7 @@ function EditCampus({ navigation }) {
             navigation.navigate('ViewCampus')
         })
         .catch(function (error) {
+            navigation.navigate('ViewCampus')
             console.log(error)
             Alert.alert('Oops...', 'Houve um erro ao tentar editar as informações');
         });

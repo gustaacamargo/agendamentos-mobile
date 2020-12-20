@@ -1,40 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
-import api from '../../services/api';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useStore } from "../../reducer";
 
 function FormCourse({ onSubmit, course }) {
-
+    const { userLogged: { userLogged } } = useStore()
     const [name, setName] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        if(course !== ''){
+        if(course){
             setName(course.name);
         }
     }, []);
 
-    async function save() {        
-        if(name) {
-            setIsLoading(true);
-            const userLogged = await api.get('/userLogged');
-            await onSubmit(course.id, {
-                name,
-                status: 'Ativo',
-                campus_id: userLogged.data.campus.id,
-            });
-            setIsLoading(false);
-            setName('');
-        }
-        else {
-            Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
-        }
+    async function save() {   
+        if(!name) { Alert.alert('Campo obrigatório', 'O campo nome deve ser preenchido'); return }
+
+        setIsLoading(true);
+        await onSubmit(course.id, {
+            name,
+            status: 'Ativo',
+            campus_id: userLogged.campusId,
+        });
+        setIsLoading(false);
+        setName('');
     }
 
     return(
-        <ScrollView >
+        <KeyboardAwareScrollView>
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Nome</Text>
+                    <Text style={styles.titleText}>Nome *</Text>
                     <TextInput 
                         keyboardType="default" 
                         style={styles.input} 
@@ -50,7 +47,7 @@ function FormCourse({ onSubmit, course }) {
                 <ActivityIndicator animating={isLoading} size="small" color="#FFF" />   
             </TouchableOpacity>
             
-        </ScrollView>
+        </KeyboardAwareScrollView>
     )
 }
 

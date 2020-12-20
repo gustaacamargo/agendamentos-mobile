@@ -38,7 +38,8 @@ function ViewCategories({ navigation }) {
             setCategories(response.data);
         })
         .catch(function (error) {
-            setIsLoading(false);   
+            setIsLoading(false);  
+            setIsRefreshing(false);     
             console.log(error)
             Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
         });

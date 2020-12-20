@@ -1,42 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { StatusBar, KeyboardAvoidingView, StyleSheet, Alert } from "react-native";
-import DismissKeyboard from '../../../utils/dismissKeyboard';
+import { KeyboardAvoidingView, StyleSheet, Alert } from "react-native";
 import api from '../../../services/api';
-import FormCategory from '../../../components/Form Category';
-import { Text } from "react-native";
+import FormCourse from '../../../components/Form Course';
 
-function EditCategories({ navigation }) {
-    const [category, setCategory] = useState(navigation.getParam('category'))
+function EditCourses({ navigation }) {
+    const [course, setCourse] = useState(navigation.getParam('course'))
 
     useEffect(() => {
         const listener = navigation.addListener('didFocus', () => {
-            setCategory(navigation.getParam('category'))
+            setCourse(navigation.getParam('course'))
         })
 
         return () => {
             listener.remove()
         }
     }, [navigation])
-    
-    async function edit(id, data) {  
-        await api.put("/categories/"+id, data)
-        .then(function (response) {                
-            Alert.alert('Prontinho', 'Ano editado com sucesso!');
-            navigation.navigate('ViewCategories')
+
+    async function edit(id, data) {        
+        await api.put("/courses/"+id, data)
+        .then(function (response) {   
+            navigation.push('ViewCourses')             
+            Alert.alert('Prontinho', 'Curso editado com sucesso!');
         })
         .catch(function (error) {
-            navigation.navigate('ViewCategories')
+            navigation.push('ViewCourses')   
             console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar editar o ano');
+            Alert.alert('Oops...', 'Houve um erro ao tentar editar as informações');
         });
     }
 
     return(
-        <DismissKeyboard>
-            <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-                <FormCategory onSubmit={edit} category={category}/>
-            </KeyboardAvoidingView>
-        </DismissKeyboard>
+        <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
+            <FormCourse onSubmit={edit} course={course}/>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -126,4 +122,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default EditCategories;
+export default EditCourses;
