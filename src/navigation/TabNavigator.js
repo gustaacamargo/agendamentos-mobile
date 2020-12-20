@@ -1,5 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
+import { TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { StackNewCampus, StackViewCampus } from './Campus';
 import { StackNewCategories, StackViewCategories } from './Categories';
@@ -26,6 +27,10 @@ const navOptions = (navigation) => ({
                 style={{fontSize: 30}} 
                 color="#FFF"/>
         );
+    },
+    tabBarOnPress: ({navigation, defaultHandler}) => {
+        defaultHandler()
+        navigation.popToTop()
     }
 })
 
