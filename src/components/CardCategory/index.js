@@ -1,8 +1,9 @@
 import React from 'react'
 import { Text, TouchableOpacity, View, StyleSheet, Alert } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons';
+import { ActivityIndicator } from 'react-native';
 
-export default function CardCategory({ isOnModal, onOpen, item, setItem, deleteCategory, navigation }) {
+export default function CardCategory({ isOnModal, onOpen, item, setItem, deleteCategory, isDeleting, navigation }) {
 
     async function confirmDelete(id) {
         Alert.alert(
@@ -17,7 +18,7 @@ export default function CardCategory({ isOnModal, onOpen, item, setItem, deleteC
     }
 
     return (
-        <TouchableOpacity onPress={() => { onOpen(); setItem(item) }} style={{ width: '100%', backgroundColor: '#FFF', marginBottom: 20, borderRadius: 25, padding: 20 }}>
+        <TouchableOpacity onPress={() => { onOpen(); setItem(item) }} style={styles.main(isOnModal)}>
             <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                 <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16 }}>Descrição: </Text>
                 <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.description}</Text>
@@ -36,7 +37,9 @@ export default function CardCategory({ isOnModal, onOpen, item, setItem, deleteC
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.row} onPress={() => confirmDelete(item.id)}>
                                 <MaterialIcons name="delete" style={styles.buttons} color="#FFF"/>
-                                {/* <ActivityIndicator animating={isLoading} size="small" color="#000" />    */}
+                                {isDeleting && (
+                                    <ActivityIndicator animating={isDeleting} size="small" color="#000" />   
+                                )}
                             </TouchableOpacity>
                         </View>
                     )}
@@ -48,6 +51,22 @@ export default function CardCategory({ isOnModal, onOpen, item, setItem, deleteC
 }
 
 const styles = StyleSheet.create({
+    main: isOnModal => ({
+        width: '100%', 
+        backgroundColor: '#FFF', 
+        marginBottom: 20, 
+        borderRadius: 25, 
+        padding: 20,
+        shadowColor: "#333",
+        shadowOffset: {
+            width: 0,
+            height: 5,
+        },
+        shadowOpacity: isOnModal ? 0 : 0.25,
+        shadowRadius: isOnModal ? 0 : 3.84,
+
+        elevation: 5
+    }),  
     row: {
         flexDirection: 'row',
     }, 

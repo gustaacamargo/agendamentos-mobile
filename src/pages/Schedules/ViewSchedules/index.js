@@ -126,7 +126,7 @@ function ViewSchedule({ navigation }) {
             />
 
             {schedules.length <= 0 && (
-                <View style={{ alignItems: 'center', marginTop: 50 }}>
+                <View style={{ alignItems: 'center', flex: 1 }}>
                     <Text style={{ color: '#777', fontSize: 16, fontWeight: '500' }}>Nenhum agendamento para este dia</Text>
                 </View>
             )}

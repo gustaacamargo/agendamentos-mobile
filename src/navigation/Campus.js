@@ -5,6 +5,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 import NewCampus from '../pages/Campus/NewCampus';
 import ViewCampus from '../pages/Campus/ViewCampus';
+import { screenWidth } from '../constants/screen';
 
 const headerOptions = {
     shadowRadius: 0,
@@ -20,7 +21,7 @@ const options = (title, navigation) => ({
     title: title,
     headerLeft: () =>
         <TouchableOpacity onPress={() => navigation.toggleDrawer()} >
-            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 5}} color="#FFF"/>
+            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: screenWidth * 0.04}} color="#FFF"/>
         </TouchableOpacity>
 })
 

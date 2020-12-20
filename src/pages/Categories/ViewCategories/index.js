@@ -12,6 +12,7 @@ function ViewCategories({ navigation }) {
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState({})
     const [isLoading, setIsLoading] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false);
     const modalizeRef = useRef(null);
 
@@ -44,12 +45,14 @@ function ViewCategories({ navigation }) {
     }  
 
     async function deleteCategory(id) {
+        setIsDeleting(true)
         await api.delete(`/categories/${id}`)
         .then(function (response) {
-            setCategory({})
+            setIsDeleting(false)
             Alert.alert('Prontinho', 'Ano deletado com sucesso');
         })
         .catch(function (error) {
+            setIsDeleting(false)
             console.log(error)
             Alert.alert('Oops...', 'Houve um tentar visualizar as informações, tente novamente!');
         });
@@ -73,7 +76,7 @@ function ViewCategories({ navigation }) {
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
             <Modalize adjustToContentHeight={true} ref={modalizeRef}>
-                <CardCategory navigation={navigation} isOnModal={true} onOpen={onOpen} item={category} setItem={setCategory} deleteCategory={deleteCategory}/>
+                <CardCategory navigation={navigation} isOnModal={true} onOpen={onOpen} item={category} setItem={setCategory} deleteCategory={deleteCategory} isDeleting={isDeleting}/>
             </Modalize>
 
             {categories.length <= 0 && (

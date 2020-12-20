@@ -22,7 +22,7 @@ function EditCategories({ navigation }) {
         await api.put("/categories/"+id, data)
         .then(function (response) {                
             Alert.alert('Prontinho', 'Ano editado com sucesso!');
-            navigation.pop(2)
+            navigation.navigate('ViewCategories')
         })
         .catch(function (error) {
             console.log(error)
