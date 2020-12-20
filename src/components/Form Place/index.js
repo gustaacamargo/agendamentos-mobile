@@ -11,7 +11,6 @@ function FormPlace({ onSubmit, place }) {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        console.log(place.capacity);
         if(place){
             setName(place.name);
             setCapacity(place.capacity);
