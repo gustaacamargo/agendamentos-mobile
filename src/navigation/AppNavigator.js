@@ -21,7 +21,7 @@ const AppNavigator = createAppContainer(
             Salas: PlacesTabs,
             Usuarios: UsersTabs
           },
-          Menu
+          { contentComponent: Menu }
         ),
         Auth: StackLogin,
       },

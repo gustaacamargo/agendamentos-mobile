@@ -33,7 +33,8 @@ const tabOptions = {
     activeBackgroundColor: '#042963',
     inactiveBackgroundColor: '#042963',
     activeTintColor: 'white',
-    inactiveTintColor: 'gray'
+    inactiveTintColor: 'gray',
+    safeAreaInset: "bottom"
 }
 
 const options = {
