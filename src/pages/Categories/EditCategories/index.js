@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { StatusBar, KeyboardAvoidingView, StyleSheet, Alert } from "react-native";
+import { KeyboardAvoidingView, StyleSheet, Alert } from "react-native";
 import DismissKeyboard from '../../../utils/dismissKeyboard';
 import api from '../../../services/api';
 import FormCategory from '../../../components/Form Category';
-import { Text } from "react-native";
 
 function EditCategories({ navigation }) {
     const [category, setCategory] = useState(navigation.getParam('category'))

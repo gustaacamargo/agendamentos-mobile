@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Alert, View, StatusBar, StyleSheet, RefreshControl, ScrollView, ActivityIndicator } from 'react-native';
-import Swiper from 'react-native-swiper';
+import { Alert, View, StyleSheet, RefreshControl } from 'react-native';
 import api from '../../../services/api';
 import { FlatList } from 'react-native';
 import { Text } from 'react-native';
