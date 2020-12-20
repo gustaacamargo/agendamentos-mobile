@@ -1,48 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
-import Select2 from "react-native-select-two";
-import api from '../../services/api';
-import { formatDate } from '../../utils/formatDate';
-import { isHourValid } from '../../utils/isHourValid';
-import { returnDateFormatted } from '../../utils/returnDateFormatted';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useStore } from "../../reducer";
 
 function FormPlace({ onSubmit, place }) {
+    const { userLogged: { userLogged } } = useStore()
 
     const [name, setName] = useState('');
     const [capacity, setCapacity] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        if(place !== ''){
+        console.log(place.capacity);
+        if(place){
             setName(place.name);
             setCapacity(place.capacity);
         }
     }, []);
 
-    async function save() {        
-        if(name && capacity) {
-            setIsLoading(true);
-            const userLogged = await api.get('/userLogged');
-            await onSubmit(place.id, {
-                name,
-                capacity,
-                status: 'Ativo',
-                campus_id: userLogged.data.campus.id,
-            });
-            setIsLoading(false);
-            setName('');
-            setCapacity('');
-        }
-        else {
-            Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
-        }
+    async function save() {
+        if(!name) { Alert.alert('Campo obrigatório', 'O campo nome deve ser preenchido'); return }       
+        if(!capacity) { Alert.alert('Campo obrigatório', 'O campo capacidade deve ser preenchido'); return }       
+
+        setIsLoading(true);
+        await onSubmit(place.id, {
+            name,
+            capacity,
+            status: 'Ativo',
+            campus_id: userLogged.campusId,
+        });
+        setIsLoading(false);
+        setName('');
+        setCapacity('');
     }
 
     return(
-        <ScrollView >
+        <KeyboardAwareScrollView>
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Nome</Text>
+                    <Text style={styles.titleText}>Nome *</Text>
                     <TextInput 
                         keyboardType="default" 
                         style={styles.input} 
@@ -55,12 +51,12 @@ function FormPlace({ onSubmit, place }) {
 
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Capacidade</Text>
+                    <Text style={styles.titleText}>Capacidade*</Text>
                     <TextInput 
-                        keyboardType="numbers-and-punctuation" 
-                        style={styles.input} 
+                        keyboardType="numeric" 
+                        style={styles.input}      
                         placeholder="Capacidade"
-                        value={capacity}
+                        value={capacity.toString()}
                         onChangeText={setCapacity}
                     />
                 </View>
@@ -71,7 +67,7 @@ function FormPlace({ onSubmit, place }) {
                 <ActivityIndicator animating={isLoading} size="small" color="#FFF" />   
             </TouchableOpacity>
             
-        </ScrollView>
+        </KeyboardAwareScrollView>
     )
 }
 

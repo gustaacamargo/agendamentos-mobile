@@ -4,6 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import NewPlaces from '../pages/Places/NewPlaces';
+import EditPlaces from '../pages/Places/EditPlaces';
 import ViewPlaces from '../pages/Places/ViewPlaces';
 import { screenWidth } from '../constants/screen';
 
@@ -28,7 +29,11 @@ const options = (title, navigation) => ({
 export const StackNewPlaces = createStackNavigator({
     NewPlaces: {
         screen: NewPlaces,
-        navigationOptions: ({ navigation }) => options('Salas', navigation)
+        navigationOptions: ({ navigation }) => options('Nova sala', navigation)
+    },
+    EditPlaces: {
+        screen: EditPlaces,
+        navigationOptions: ({ navigation }) => options('Editar sala', navigation)
     },
 }, {
     defaultNavigationOptions: {
@@ -41,7 +46,7 @@ export const StackNewPlaces = createStackNavigator({
 export const StackViewPlaces = createStackNavigator({
     ViewPlaces: {
         screen: ViewPlaces,
-        navigationOptions: ({ navigation }) => options('Salas', navigation)
+        navigationOptions: ({ navigation }) => options('Visualizar salas', navigation)
     },
 }, {
     defaultNavigationOptions: {

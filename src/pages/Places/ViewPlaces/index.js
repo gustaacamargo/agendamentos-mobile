@@ -1,120 +1,114 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Alert, View, StatusBar, StyleSheet, RefreshControl, ScrollView, ActivityIndicator } from 'react-native';
-import Swiper from 'react-native-swiper';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Alert, View, StyleSheet, RefreshControl } from 'react-native';
 import api from '../../../services/api';
-import PlacesCard from "../../../components/PlacesCard";
+import { NavigationEvents } from 'react-navigation';
+import { FlatList } from 'react-native';
+import { Modalize } from 'react-native-modalize';
+import CardPlace from '../../../components/CardPlace';
+import { Text } from 'react-native';
 
-function ViewPlaces() {
+function ViewPlaces({ navigation }) {
     const [places, setPlaces] = useState([]);
+    const [place, setPlace] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [modified, setModified] = useState(false);
-    const [showApp, setShowApp] = useState(false);
+    const modalizeRef = useRef(null);
 
     const onRefresh = useCallback(() => {
-        setIsRefreshing(true);
         retrievePlaces();
-        setIsRefreshing(false);
-        
-      }, [isRefreshing]);
+    }, [isRefreshing]);
+
+    const onOpen = () => {
+        modalizeRef.current?.open();
+    };
 
     useEffect(() => {
-        setIsLoading(true);  
         retrievePlaces();
-
-    }, [modified]);
+    }, [place]);
 
     async function retrievePlaces() {
+        setIsRefreshing(true);   
+        setIsLoading(true)
         await api.get("/places")
         .then(function (response) {
+            setIsLoading(false);  
+            setIsRefreshing(false);
             setPlaces(response.data);
         })
         .catch(function (error) {
+            setIsLoading(false);  
+            setIsRefreshing(false);
             console.log(error)
             Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
-        });
-        setIsLoading(false);   
-        setShowApp(true);    
+        }); 
     }  
 
     async function deletePlace(id) {
+        setIsDeleting(true)
         await api.delete(`/places/${id}`)
         .then(function (response) {
+            setPlace({})
             Alert.alert('Prontinho', 'Sala deletada com sucesso');
-            setModified(true);
+            setIsDeleting(false)
         })
         .catch(function (error) {
+            setIsDeleting(false)
             console.log(error)
-            Alert.alert('Oops...', 'Houve um tentar visualizar as informações, tente novamente!');
+            Alert.alert('Oops...', 'Houve um tentar deletar as informações, tente novamente!');
         });
-        setModified(false);
-        setShowApp(false);
     }
 
-    async function editPlace(id, data) {        
-
-        await api.put(`/places/${id}`, data)
-        .then(function (response) {                
-            Alert.alert('Prontinho', 'Sala editada com sucesso!');
-            setModified(true);
-        })
-        .catch(function (error) {
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar editar a sala');
-        });
-        setModified(false);
-        setShowApp(false);
+    function renderCard({ item }) {
+        return(
+            <CardPlace isOnModal={false} onOpen={onOpen} item={item} setItem={setPlace}/>
+        )
     }
 
     return(
-        <>
-            <StatusBar backgroundColor="#042963" barStyle="light-content"/>
-            <ScrollView 
-                contentContainerStyle={styles.main}
-                refreshControl={
-                    <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-                }
-            >
-                { isLoading && (
-                    <View style={styles.loading}>
-                        <ActivityIndicator size="large" color="#FFF" />    
-                    </View>)
-                }
-                
-                {showApp && (
-                        <View style={styles.row}>    
-                                <Swiper 
-                                    loop={false} 
-                                    showsPagination={false}
-                                >    
-                                    {places.map( place => (
-                                        <PlacesCard onEdit={editPlace} onDelete={deletePlace} key={place.id} place={place}/>
-                                    ))}
-                                </Swiper>
-                        </View>
-                )}
-            </ScrollView>      
-        </>
+        <View style={styles.main}>
+            <NavigationEvents onDidFocus={payload => retrievePlaces()} />
+            <FlatList 
+                style={styles.pdTop20}
+                contentContainerStyle={styles.mh20}
+                data={places}
+                renderItem={renderCard}
+                keyExtractor={(item, index) => index.toString()}
+                refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+            />
+            <Modalize adjustToContentHeight={true} ref={modalizeRef}>
+                <CardPlace navigation={navigation} isOnModal={true} onOpen={onOpen} item={place} setItem={setPlace} deletePlace={deletePlace} isDeleting={isDeleting}/>
+            </Modalize>
+
+            {places.length <= 0 && (
+                <View style={styles.center}>
+                    <Text style={styles.txtNothing}>Nenhuma sala cadastrada</Text>
+                </View>
+            )}
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    loading: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.8)',
-        justifyContent: 'center',
-        alignItems: 'center'
-
-    },
-    main: { 
+    main: {
         flex: 1, 
-        backgroundColor: '#7c90b1',
-        padding: 10,
-    }, 
-    row: {
+        backgroundColor: '#F0F0F0'
+    },
+    pdTop20: {
+        paddingTop: 20
+    },
+    mh20: {
+        marginHorizontal: 20
+    },
+    center: { 
         flex: 1,
-        flexDirection: 'row',
-    },   
+        alignItems: 'center', 
+    },
+    txtNothing: { 
+        color: '#777', 
+        fontSize: 16, 
+        fontWeight: '500' 
+    }
 });
 
 export default ViewPlaces;
