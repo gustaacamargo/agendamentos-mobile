@@ -3,14 +3,14 @@ import { Text, TouchableOpacity, View, StyleSheet, Alert } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons';
 import { ActivityIndicator } from 'react-native';
 
-export default function CardCategory({ isOnModal, onOpen, item, setItem, deleteCategory, isDeleting, navigation }) {
+export default function CardCampus({ isOnModal, onOpen, item, setItem, deleteCampus, isDeleting, navigation }) {
 
     async function confirmDelete(id) {
         Alert.alert(
             'Confirmação',
-            'Realmente deseja excluir esse ano?',
+            'Realmente deseja excluir esse campus?',
             [
-                {text: 'Sim', onPress: () => deleteCategory(id)},
+                {text: 'Sim', onPress: () => deleteCampus(id)},
                 {text: 'Não', style: 'cancel'},
             ],
             { cancelable: false }
@@ -20,8 +20,12 @@ export default function CardCategory({ isOnModal, onOpen, item, setItem, deleteC
     return (
         <TouchableOpacity onPress={() => { onOpen(); setItem(item) }} style={styles.main(isOnModal)}>
             <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-                <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16 }}>Descrição: </Text>
-                <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.description}</Text>
+                <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16 }}>Cidade: </Text>
+                <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.city}</Text>
+            </View>
+            <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16 }}>Endereço: </Text>
+                <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.adress}</Text>
             </View>
             <View style={{ flexDirection: 'row' }}>
                 <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16, }}>Status: </Text>
@@ -32,7 +36,7 @@ export default function CardCategory({ isOnModal, onOpen, item, setItem, deleteC
                 <>
                     {(item.status === 'Ativo') && (
                         <View style={styles.buttonsGroup}>
-                            <TouchableOpacity onPress={() => navigation.push('EditCategories', { category: item })} style={styles.row}>
+                            <TouchableOpacity onPress={() => navigation.push('EditCampus', { campus: item })} style={styles.row}>
                                 <MaterialIcons name="edit" style={[styles.buttons, { marginLeft: 0 }]} color="#FFF"/>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.row} onPress={() => confirmDelete(item.id)}>

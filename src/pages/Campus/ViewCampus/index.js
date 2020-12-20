@@ -1,120 +1,113 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Alert, View, StatusBar, StyleSheet, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
-import Swiper from 'react-native-swiper';
 import api from '../../../services/api';
-import CampusCard from "../../../components/CampusCard";
+import { Modalize } from 'react-native-modalize';
+import { NavigationEvents } from 'react-navigation';
+import { FlatList } from 'react-native';
+import CardCampus from '../../../components/CardCampus';
+import { Text } from 'react-native';
 
-function ViewCampus() {
+function ViewCampus({ navigation }) {
     const [campuses, setCampuses] = useState([]);
+    const [campus, setCampus] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [modified, setModified] = useState(false);
-    const [showApp, setShowApp] = useState(false);
+    const modalizeRef = useRef(null);
 
     const onRefresh = useCallback(() => {
-        setIsRefreshing(true);
-        retrieveCampuses();
-        setIsRefreshing(false);
-        
+        retrieveCampuses();        
     }, [isRefreshing]);
 
-    useEffect(() => {
-        setIsLoading(true);  
-        retrieveCampuses();
+    const onOpen = () => {
+        modalizeRef.current?.open();
+    };
 
-    }, [modified]);
+    useEffect(() => {
+        retrieveCampuses();
+    }, [campus]);
 
     async function retrieveCampuses() {
+        setIsRefreshing(true);   
+        setIsLoading(true)
         await api.get("/campuses")
         .then(function (response) {
+            setIsLoading(false);  
+            setIsRefreshing(false); 
             setCampuses(response.data);
         })
         .catch(function (error) {
+            setIsLoading(false);   
             console.log(error)
             Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
-        });
-        setIsLoading(false);   
-        setShowApp(true);    
+        });   
     }  
 
     async function deleteCampus(id) {
+        setIsDeleting(true)
         await api.delete(`/campuses/${id}`)
         .then(function (response) {
+            setCampus({})
+            setIsDeleting(false)
             Alert.alert('Prontinho', 'Campus deletado com sucesso');
-            setModified(true);
         })
         .catch(function (error) {
+            setIsDeleting(false)
             console.log(error)
             Alert.alert('Oops...', 'Houve um tentar visualizar as informações, tente novamente!');
         });
-        setModified(false);
-        setShowApp(false);
     }
 
-    async function editCampus(id, data) {        
-
-        await api.put(`/campuses/${id}`, data)
-        .then(function (response) {                
-            Alert.alert('Prontinho', 'Campus editado com sucesso!');
-            setModified(true);
-        })
-        .catch(function (error) {
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar editar o campus');
-        });
-        setModified(false);
-        setShowApp(false);
+    function renderCard({ item }) {
+        return(
+            <CardCampus isOnModal={false} onOpen={onOpen} item={item} setItem={setCampus}/>
+        )
     }
 
     return(
-        <>
-            <StatusBar backgroundColor="#042963" barStyle="light-content"/>
-            <ScrollView 
-                contentContainerStyle={styles.main}
-                refreshControl={
-                    <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-                }
-            >
-                { isLoading && (
-                    <View style={styles.loading}>
-                        <ActivityIndicator size="large" color="#FFF" />    
-                    </View>)
-                }
-                
-                {showApp && (
-                    <View style={styles.row}>                          
-                        <Swiper 
-                            loop={false} 
-                            showsPagination={false}
-                        >    
-                            {campuses.map( campus => (
-                                <CampusCard onEdit={editCampus} onDelete={deleteCampus} key={campus.id} campus={campus}/>
-                            ))}
-                        </Swiper>
-                    </View>
-                )}
-            </ScrollView>      
-        </>
+        <View style={styles.main}>
+            <NavigationEvents onDidFocus={payload => retrieveCampuses()} />
+            <FlatList 
+                style={styles.pdTop20}
+                contentContainerStyle={styles.mh20}
+                data={campuses}
+                renderItem={renderCard}
+                keyExtractor={(item, index) => index.toString()}
+                refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+            />
+            <Modalize adjustToContentHeight={true} ref={modalizeRef}>
+                <CardCampus navigation={navigation} isOnModal={true} onOpen={onOpen} item={campus} setItem={setCampus} deleteCampus={deleteCampus} isDeleting={isDeleting}/>
+            </Modalize>
+
+            {campuses.length <= 0 && (
+                <View style={styles.center}>
+                    <Text style={styles.txtNothing}>Nenhum campus cadastrado</Text>
+                </View>
+            )}
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    loading: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.8)',
-        justifyContent: 'center',
-        alignItems: 'center'
-
-    },
-    main: { 
+    main: {
         flex: 1, 
-        backgroundColor: '#7c90b1',
-        padding: 10,
-    }, 
-    row: {
+        backgroundColor: '#F0F0F0'
+    },
+    pdTop20: {
+        paddingTop: 20
+    },
+    mh20: {
+        marginHorizontal: 20
+    },
+    center: { 
         flex: 1,
-        flexDirection: 'row',
-    },   
+        alignItems: 'center', 
+    },
+    txtNothing: { 
+        color: '#777', 
+        fontSize: 16, 
+        fontWeight: '500' 
+    }  
 });
 
 export default ViewCampus;

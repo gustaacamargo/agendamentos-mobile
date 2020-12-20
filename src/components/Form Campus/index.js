@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
-import api from '../../services/api';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 function FormCampus({ onSubmit, campus }) {
 
@@ -9,34 +9,32 @@ function FormCampus({ onSubmit, campus }) {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        if(campus !== ''){
+        if(campus){
             setCity(campus.city);
             setAdress(campus.adress);
         }
     }, []);
 
-    async function save() {        
-        if(city && adress) {
-            setIsLoading(true);
-            await onSubmit(campus.id, {
-                city,
-                adress,
-                status: 'Ativo',
-            });
-            setIsLoading(false);
-            setCity('');
-            setAdress('');
-        }
-        else {
-            Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
-        }
+    async function save() {   
+        if(!city) { Alert.alert('Campo obrigatório', 'O campo cidade deve ser preenchido'); return }
+        if(!adress) { Alert.alert('Campo obrigatório', 'O campo endereço deve ser preenchido'); return }
+
+        setIsLoading(true);
+        await onSubmit(campus.id, {
+            city,
+            adress,
+            status: 'Ativo',
+        });
+        setIsLoading(false);
+        setCity('');
+        setAdress('');
     }
 
     return(
-        <ScrollView >
+        <KeyboardAwareScrollView>
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Cidade</Text>
+                    <Text style={styles.titleText}>Cidade *</Text>
                     <TextInput 
                         keyboardType="default" 
                         style={styles.input} 
@@ -48,7 +46,7 @@ function FormCampus({ onSubmit, campus }) {
             </View>
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Endereço</Text>
+                    <Text style={styles.titleText}>Endereço *</Text>
                     <TextInput 
                         keyboardType="default" 
                         style={styles.input} 
@@ -64,7 +62,7 @@ function FormCampus({ onSubmit, campus }) {
                 <ActivityIndicator animating={isLoading} size="small" color="#FFF" />   
             </TouchableOpacity>
             
-        </ScrollView>
+        </KeyboardAwareScrollView>
     )
 }
 

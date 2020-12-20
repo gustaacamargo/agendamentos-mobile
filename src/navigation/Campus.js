@@ -4,6 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import NewCampus from '../pages/Campus/NewCampus';
+import EditCampus from '../pages/Campus/EditCampus';
 import ViewCampus from '../pages/Campus/ViewCampus';
 import { screenWidth } from '../constants/screen';
 
@@ -28,7 +29,11 @@ const options = (title, navigation) => ({
 export const StackNewCampus = createStackNavigator({
     NewCampus: {
         screen: NewCampus,
-        navigationOptions: ({ navigation }) => options('Campus', navigation)
+        navigationOptions: ({ navigation }) => options('Novo campus', navigation)
+    },
+    EditCampus: {
+        screen: EditCampus,
+        navigationOptions: ({ navigation }) => options('Editar campus', navigation)
     },
 }, {
     defaultNavigationOptions: {
@@ -41,7 +46,7 @@ export const StackNewCampus = createStackNavigator({
 export const StackViewCampus = createStackNavigator({
     ViewCampus: {
         screen: ViewCampus,
-        navigationOptions: ({ navigation }) => options('Campus', navigation)
+        navigationOptions: ({ navigation }) => options('Visualizar campus', navigation)
     },
 }, {
     defaultNavigationOptions: {

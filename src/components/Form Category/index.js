@@ -13,20 +13,17 @@ function FormCategory({ onSubmit, category }) {
         }
     }, [category]);
 
-    async function save() {        
-        if(description) {
-            setIsLoading(true);
-            await onSubmit(category.id, {
-                description,
-                status: 'Ativo',
-                campus_id: userLogged.campusId,
-            });
-            setIsLoading(false);
-            setDescription('');
-        }
-        else {
-            Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
-        }
+    async function save() {   
+        if(!description) { Alert.alert('Campo obrigatório', 'O campo descrição deve ser preenchido'); return }
+        
+        setIsLoading(true);
+        await onSubmit(category.id, {
+            description,
+            status: 'Ativo',
+            campus_id: userLogged.campusId,
+        });
+        setIsLoading(false);
+        setDescription('');
     }
 
     return(
