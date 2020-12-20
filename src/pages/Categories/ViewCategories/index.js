@@ -50,6 +50,7 @@ function ViewCategories({ navigation }) {
         await api.delete(`/categories/${id}`)
         .then(function (response) {
             setIsDeleting(false)
+            setCategory({})
             Alert.alert('Prontinho', 'Ano deletado com sucesso');
         })
         .catch(function (error) {

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
-import api from '../../services/api';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useStore } from "../../reducer";
 
 function FormEquipament({ onSubmit, equipament }) {
+    const { userLogged: { userLogged } } = useStore()
 
     const [name, setName] = useState('');
     const [brand, setBrand] = useState('');
@@ -10,39 +12,37 @@ function FormEquipament({ onSubmit, equipament }) {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        if(equipament !== ''){
+        if(equipament){
             setName(equipament.name);
             setBrand(equipament.brand);
             setEquityNumber(equipament.equityNumber);
         }
     }, []);
 
-    async function save() {        
-        if(name && brand && equityNumber) {
-            setIsLoading(true);
-            const userLogged = await api.get('/userLogged');
-            await onSubmit(equipament.id, {
-                name,
-                brand,
-                equityNumber,
-                status: 'Ativo',
-                campus_id: userLogged.data.campus.id,
-            })
-            setIsLoading(false);
-            setName('');
-            setBrand('');
-            setEquityNumber('');
-        }
-        else {
-            Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
-        }
+    async function save() { 
+        if(!name) { Alert.alert('Campo obrigatório', 'O campo nome deve ser preenchido'); return }       
+        if(!brand) { Alert.alert('Campo obrigatório', 'O campo marca deve ser preenchido'); return }       
+        if(!equityNumber) { Alert.alert('Campo obrigatório', 'O campo número de patrimônio deve ser preenchido'); return }       
+
+        setIsLoading(true);
+        await onSubmit(equipament.id, {
+            name,
+            brand,
+            equityNumber,
+            status: 'Ativo',
+            campus_id: userLogged.campusId,
+        })
+        setIsLoading(false);
+        setName('');
+        setBrand('');
+        setEquityNumber('');
     }
 
     return(
-        <ScrollView >
+        <KeyboardAwareScrollView>
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Nome</Text>
+                    <Text style={styles.titleText}>Nome *</Text>
                     <TextInput 
                         keyboardType="default" 
                         style={styles.input} 
@@ -54,7 +54,7 @@ function FormEquipament({ onSubmit, equipament }) {
             </View>
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Marca</Text>
+                    <Text style={styles.titleText}>Marca *</Text>
                     <TextInput 
                         keyboardType="default" 
                         style={styles.input} 
@@ -66,7 +66,7 @@ function FormEquipament({ onSubmit, equipament }) {
             </View>
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Número de patrimônio</Text>
+                    <Text style={styles.titleText}>Número de patrimônio *</Text>
                     <TextInput 
                         keyboardType="numbers-and-punctuation" 
                         style={styles.input} 
@@ -81,7 +81,7 @@ function FormEquipament({ onSubmit, equipament }) {
                 <ActivityIndicator animating={isLoading} size="small" color="#FFF" />   
             </TouchableOpacity>
             
-        </ScrollView>
+        </KeyboardAwareScrollView>
     )
 }
 

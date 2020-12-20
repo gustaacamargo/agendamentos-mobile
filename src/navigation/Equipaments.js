@@ -4,6 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import NewEquipaments from '../pages/Equipaments/NewEquipaments';
+import EditEquipaments from '../pages/Equipaments/EditEquipaments';
 import ViewEquipaments from '../pages/Equipaments/ViewEquipaments';
 import { screenWidth } from '../constants/screen';
 
@@ -28,7 +29,11 @@ const options = (title, navigation) => ({
 export const StackNewEquipaments = createStackNavigator({
     NewEquipaments: {
         screen: NewEquipaments,
-        navigationOptions: ({ navigation }) => options('Equipamentos', navigation)
+        navigationOptions: ({ navigation }) => options('Novo equipamento', navigation)
+    },
+    EditEquipaments: {
+        screen: EditEquipaments,
+        navigationOptions: ({ navigation }) => options('Editar equipamento', navigation)
     },
 }, {
     defaultNavigationOptions: {
@@ -41,7 +46,7 @@ export const StackNewEquipaments = createStackNavigator({
 export const StackViewEquipaments = createStackNavigator({
     ViewEquipaments: {
         screen: ViewEquipaments,
-        navigationOptions: ({ navigation }) => options('Equipamentos', navigation)
+        navigationOptions: ({ navigation }) => options('Visualizar equipamentos', navigation)
     },
 }, {
     defaultNavigationOptions: {
