@@ -1,23 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { KeyboardAvoidingView, StyleSheet, Alert } from "react-native";
 import api from '../../../services/api';
 import FormUser from '../../../components/Form User';
 
-function NewUsers() {
-    async function save(id, data) {        
-        await api.post("/users", data)
-        .then(function (response) {                
-            Alert.alert('Prontinho', 'Usuário cadastrado com sucesso!');
+function EditUsers({ navigation }) {
+    const [user, setUser] = useState(navigation.getParam('user'))
+
+    useEffect(() => {
+        const listener = navigation.addListener('didFocus', () => {
+            setUser(navigation.getParam('user'))
+        })
+
+        return () => {
+            listener.remove()
+        }
+    }, [navigation])
+
+    async function edit(id, data) {        
+        await api.put("/users/"+id, data)
+        .then(function (response) {   
+            navigation.navigate('ViewUsers')                
+            Alert.alert('Prontinho', 'Usuário editado com sucesso!');
         })
         .catch(function (error) {
+            navigation.navigate('ViewUsers')   
             console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar cadastrar as informações, verifique se não há outro usuário com as mesmas informações');
+            Alert.alert('Oops...', 'Houve um erro ao tentar editar as informações, verifique se não há outro usuário com as mesmas informações');
         });
     }
 
     return(
         <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-            <FormUser onSubmit={save} user={''}/>
+            <FormUser onSubmit={edit} user={user}/>
         </KeyboardAvoidingView>
     );
 }
@@ -108,4 +122,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default NewUsers;
+export default EditUsers;

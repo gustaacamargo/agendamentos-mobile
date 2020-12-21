@@ -4,6 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import NewUsers from '../pages/Users/NewUsers';
+import EditUsers from '../pages/Users/EditUsers';
 import ViewUsers from '../pages/Users/ViewUsers';
 import { screenWidth } from '../constants/screen';
 
@@ -28,7 +29,11 @@ const options = (title, navigation) => ({
 export const StackNewUsers = createStackNavigator({
     NewUsers: {
         screen: NewUsers,
-        navigationOptions: ({ navigation }) => options('Usuários', navigation)
+        navigationOptions: ({ navigation }) => options('Novo usuário', navigation)
+    },
+    EditUsers: {
+        screen: EditUsers,
+        navigationOptions: ({ navigation }) => options('Editar usuário', navigation)
     },
 }, {
     defaultNavigationOptions: {
@@ -41,7 +46,7 @@ export const StackNewUsers = createStackNavigator({
 export const StackViewUsers = createStackNavigator({
     ViewUsers: {
         screen: ViewUsers,
-        navigationOptions: ({ navigation }) => options('Usuários', navigation)
+        navigationOptions: ({ navigation }) => options('Visualizar usuários', navigation)
     },
 }, {
     defaultNavigationOptions: {

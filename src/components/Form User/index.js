@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Select2 from "react-native-select-two";
 import api from '../../services/api';
 
@@ -18,59 +19,83 @@ function FormUser({ onSubmit, user }) {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        if(user !== ''){
+        defineFunctions();
+        defineCampuses();
+    }, []);
+
+    useEffect(() => {
+        if(user){
             setEmail(user.email);
             setUsername(user.username);
             setFullname(user.fullname);
-            setCampus(user.campus);
+            setCampus(user.campus.id);
         }
-        defineCampuses();
-        defineFunctions();
-    }, []);
+    }, [campuses])
 
     async function defineCampuses() {
-        const response = await api.get("/campuses");        
-        const array = response.data;
-        array.forEach(campus => {
-            campus["name"] = campus["city"];
-        });
-        setCampuses(array); 
+        await api.get("/campuses")
+        .then(response => {
+            const array = response.data;
+            array.forEach(campus => {
+                campus["name"] = campus["city"];
+                if(user) {
+                    if(campus["id"] == user.campus.id) {
+                        campus["checked"] = true
+                    }
+                }
+            });
+            setCampuses(array); 
+        })
+        .catch(error => {
+            console.log(error);
+            Alert.alert('Oops', 'Houve um erro ao recuperar a lista de campus')
+        });  
     }
 
     function defineFunctions(){
-        setFunctions([{ id: "adm", name: "Administrador"}, { id: "user", name: "Usuário"}]);
+        setFunctions([{ id: "adm", name: "Administrador", checked: user?.function == 'adm' ? true : false }, { id: "user", name: "Usuário", checked: user?.function == 'user' ? true : false}]);
+        setFunctionUser(user ? user.function == 'adm' ? 'adm' : 'user' : '')
     }
 
     async function save() {    
-        if(email && fullname && username && password && typeof functionUser === 'object' && typeof campus === 'object') {
-            setIsLoading(true);
-            await onSubmit(user.id, {
-                username,
-                password,
-                email,
-                fullname,
-                function: functionUser[0],
-                status: 'Ativo',
-                campus_id: campus[0],                
-            })
-            setEmail('');
-            setFullname('');
-            setUsername('');
-            setPassword('');
-            setCampus('');
-            setFunctionUser([]);
-            setIsLoading(false);
-        }
-        else {
-            Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
-        }
+        if(!email) { Alert.alert('Campo obrigatório', 'O campo email deve ser preenchido'); return }
+        if(!fullname) { Alert.alert('Campo obrigatório', 'O campo nome completo deve ser preenchido'); return }
+        if(!username) { Alert.alert('Campo obrigatório', 'O campo nome de usuário deve ser preenchido'); return }
+        if(!password) { Alert.alert('Campo obrigatório', 'O campo senha deve ser preenchido'); return }
+        if(!functionUser) { Alert.alert('Campo obrigatório', 'O campo função deve ser preenchido'); return }
+        if(!campus) { Alert.alert('Campo obrigatório', 'O campo campus deve ser preenchido'); return }
+
+        setIsLoading(true);
+        await onSubmit(user.id, {
+            username,
+            password,
+            email,
+            fullname,
+            function: functionUser,
+            status: 'Ativo',
+            campus_id: campus,                
+        })
+        clear()
+        setIsLoading(false);
+    }
+
+    function clear() {
+        setEmail('');
+        setFullname('');
+        setUsername('');
+        setPassword('');
+        setCampus('');
+        setFunctionUser([]);
+
+        defineCampuses()
+        defineFunctions()
     }
 
     return(
-        <ScrollView >
+        <KeyboardAwareScrollView>
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Nome completo</Text>
+                    <Text style={styles.titleText}>Nome completo *</Text>
                     <TextInput 
                         keyboardType="default" 
                         style={styles.input} 
@@ -82,7 +107,7 @@ function FormUser({ onSubmit, user }) {
             </View>
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Nome de usuário</Text>
+                    <Text style={styles.titleText}>Nome de usuário *</Text>
                     <TextInput 
                         autoCapitalize={false}
                         keyboardType="default" 
@@ -96,7 +121,7 @@ function FormUser({ onSubmit, user }) {
 
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>E-mail</Text>
+                    <Text style={styles.titleText}>E-mail *</Text>
                     <TextInput 
                         autoCapitalize={false}
                         keyboardType="email-address" 
@@ -110,7 +135,7 @@ function FormUser({ onSubmit, user }) {
 
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Senha</Text>
+                    <Text style={styles.titleText}>Senha *</Text>
                     <TextInput 
                         autoCapitalize="none" 
                         autoCorrect={false} 
@@ -125,7 +150,7 @@ function FormUser({ onSubmit, user }) {
 
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Função</Text>
+                    <Text style={styles.titleText}>Função *</Text>
                     <Select2
                         isSelectSingle
                         style={styles.input}
@@ -135,7 +160,7 @@ function FormUser({ onSubmit, user }) {
                         title="Função"
                         data={functions}
                         onSelect={data => {
-                            setFunctionUser(data);                                         
+                            setFunctionUser(data[0]);                                         
                         }}
                         cancelButtonText="Cancelar"
                         selectButtonText="Selecionar"
@@ -146,7 +171,7 @@ function FormUser({ onSubmit, user }) {
 
             <View style={styles.row}>
                 <View style={styles.card}>
-                    <Text style={styles.titleText}>Campus</Text>
+                    <Text style={styles.titleText}>Campus *</Text>
                     <Select2
                         isSelectSingle
                         style={styles.input}
@@ -156,7 +181,7 @@ function FormUser({ onSubmit, user }) {
                         title="Campus"
                         data={campuses}
                         onSelect={data => {
-                            setCampus(data);                                         
+                            setCampus(data[0]);                                         
                         }}
                         cancelButtonText="Cancelar"
                         selectButtonText="Selecionar"
@@ -170,7 +195,7 @@ function FormUser({ onSubmit, user }) {
                 <ActivityIndicator animating={isLoading} size="small" color="#FFF" />   
             </TouchableOpacity>
             
-        </ScrollView>
+        </KeyboardAwareScrollView>
     )
 }
 
