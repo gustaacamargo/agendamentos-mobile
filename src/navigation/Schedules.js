@@ -4,6 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import NewSchedule from '../pages/Schedules/NewSchedules';
+import EditSchedule from '../pages/Schedules/EditSchedules';
 import ViewSchedule from '../pages/Schedules/ViewSchedules';
 import { screenWidth } from '../constants/screen';
 
@@ -28,7 +29,11 @@ const options = (title, navigation) => ({
 export const StackNewSchedules = createStackNavigator({
     NewSchedules: {
         screen: NewSchedule,
-        navigationOptions: ({ navigation }) => options('Agendamentos', navigation)
+        navigationOptions: ({ navigation }) => options('Novo agendamento', navigation)
+    },
+    EditSchedules: {
+        screen: EditSchedule,
+        navigationOptions: ({ navigation }) => options('Editar agendamento', navigation)
     },
 }, {
     defaultNavigationOptions: {
@@ -41,7 +46,7 @@ export const StackNewSchedules = createStackNavigator({
 export const StackViewSchedules = createStackNavigator({
     ViewSchedules: {
         screen: ViewSchedule,
-        navigationOptions: ({ navigation }) => options('Agendamentos', navigation)
+        navigationOptions: ({ navigation }) => options('Visualizar agendamentos', navigation)
     },
 }, {
     defaultNavigationOptions: {

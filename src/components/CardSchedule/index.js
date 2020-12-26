@@ -18,7 +18,7 @@ export default function CardSchedule({ isOnModal, onOpen, item, setItem, editSch
     }
 
     return (
-        <TouchableOpacity onPress={() => { onOpen(); setItem(item) }} style={{ width: '100%', backgroundColor: '#FFF', marginBottom: 20, borderRadius: 25, padding: 20 }}>
+        <TouchableOpacity onPress={() => { onOpen(); setItem(item) }} style={styles.main(isOnModal)}>
             <View style={styles.line}>
                 <Text style={[ styles.text(item.status), { marginBottom: 10 } ]}>Data: {moment(item.date.substring(0,10)).format('DD/MM/YYYY')}</Text>
                 <View style={styles.row}>
@@ -52,7 +52,7 @@ export default function CardSchedule({ isOnModal, onOpen, item, setItem, editSch
 
                     {(item.status === 'Confirmado') && (
                         <View style={styles.buttonsGroup}>
-                            <TouchableOpacity onPress={() => navigation.navigate('NewSchedules', { schedule: item })} style={styles.row}>
+                            <TouchableOpacity onPress={() => navigation.navigate('EditSchedules', { schedule: item })} style={styles.row}>
                                 <MaterialIcons name="edit" style={[styles.buttons, { marginLeft: 0 }]} color="#FFF"/>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.row} onPress={() => confirmDelete(item.id)}>
@@ -69,6 +69,22 @@ export default function CardSchedule({ isOnModal, onOpen, item, setItem, editSch
 }
 
 const styles = StyleSheet.create({
+    main: isOnModal => ({
+        width: '100%', 
+        backgroundColor: '#FFF', 
+        marginBottom: 20, 
+        borderRadius: 25, 
+        padding: 20,
+        shadowColor: "#333",
+        shadowOffset: {
+            width: 0,
+            height: 5,
+        },
+        shadowOpacity: isOnModal ? 0 : 0.25,
+        shadowRadius: isOnModal ? 0 : 3.84,
+
+        elevation: 5
+    }), 
     row: {
         flexDirection: 'row',
     }, 

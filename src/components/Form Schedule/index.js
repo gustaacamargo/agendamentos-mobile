@@ -18,7 +18,7 @@ function FormSchedule({ onSubmit, schedule }) {
     const [final, setFinal] = useState(moment().format('HH:mm'));
     const [initial, setInitial] = useState(moment().format('HH:mm'));
     const [comments, setComments] = useState('');
-
+    const [edited, setEdited] = useState(false)
     const [course, setCourse] = useState('');
     const [category, setCategory] = useState('');
     const [place, setPlace] = useState('');
@@ -70,9 +70,16 @@ function FormSchedule({ onSubmit, schedule }) {
             setPlace(schedule.place.id)
             setComments(schedule.comments);
 
-            disponibilty()
+            setEdited(true)
         }
     }, [schedule]);
+
+    useEffect(() => {
+        if(edited) {
+            setEdited(false)
+            disponibilty()
+        }
+    }, [edited])
 
     function setArrays(array, comp, setter, setterArray) {
         let a = []
@@ -119,7 +126,7 @@ function FormSchedule({ onSubmit, schedule }) {
                 
             })
             .catch(function (error) {
-                console.log(error);
+                console.log(error.response);
                 Alert.alert('Erro', error.response.data.error);
                 setIsLoading(false); 
             });

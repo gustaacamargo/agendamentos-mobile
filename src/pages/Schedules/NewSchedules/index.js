@@ -4,44 +4,20 @@ import api from '../../../services/api';
 import FormSchedule from '../../../components/Form Schedule';
 
 function NewSchedule({ navigation }) {
-    const [schedule, setSchedule] = useState(navigation.getParam('schedule'))
-
-    useEffect(() => {
-        const listener = navigation.addListener('didFocus', () => {
-            setSchedule(navigation.getParam('schedule'))
-        })
-
-        return () => {
-            listener.remove()
-        }
-    }, [navigation])
-
     async function save(id, data) { 
-        if(id) {
-            await api.put(`/schedules/${id}`, data)
-            .then(function (response) {                
-                Alert.alert('Prontinho', 'Agendamento editado com sucesso!');
-            })
-            .catch(function (error) {
-                console.log(error)
-                Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
-            });
-        }    
-        else {
-            await api.post("/schedules", data)
-            .then(function (response) {                
-                Alert.alert('Prontinho', 'Agendamento realizado com sucesso!');
-            })
-            .catch(function (error) {
-                console.log(error)
-                Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
-            });
-        }  
+        await api.post("/schedules", data)
+        .then(function (response) {                
+            Alert.alert('Prontinho', 'Agendamento realizado com sucesso!');
+        })
+        .catch(function (error) {
+            console.log(error)
+            Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
+        });
     }
 
     return(
         <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-            <FormSchedule onSubmit={save} schedule={navigation.getParam('schedule')}/>
+            <FormSchedule onSubmit={save} schedule={''}/>
         </KeyboardAvoidingView>
     );
 }
