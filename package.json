@@ -13,7 +13,7 @@
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-picker/picker": "^1.9.4",
     "@react-navigation/bottom-tabs": "^5.2.4",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "date-fns": "^2.16.1",
     "expo": "^39.0.0",
     "moment": "^2.29.1",
