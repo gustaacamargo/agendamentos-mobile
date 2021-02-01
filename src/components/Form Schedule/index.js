@@ -94,20 +94,27 @@ function FormSchedule({ onSubmit, schedule }) {
     }
 
     async function disponibilty() {     
-        if(date && initial && final) {
-            setIsLoading(true);
+        if(!date) { Alert.alert('Campo não preenchido', 'O campo data deve ser preenchido'); return }  
+        if(!initial) { Alert.alert('Campo não preenchido', 'O campo início deve ser preenchido'); return }  
+        if(!final) { Alert.alert('Campo não preenchido', 'O campo final deve ser preenchido'); return }  
 
-            let lenghtPlaces = 0;
-            await api.get("/availability", {
-                headers: { 
-                    initial: initial,
-                    final: final,
-                    date_a: formatDate(date), 
-                    status: 'Confirmado'
-                },
-            })
-            .then(function (response) {
-                if(schedule){    
+        setIsLoading(true);
+
+        let lenghtPlaces = 0;
+        await api.get("/availability", {
+            headers: { 
+                initial: initial,
+                final: final,
+                date_a: formatDate(date), 
+                status: 'Confirmado'
+            },
+        })
+        .then(function (response) {
+            if(schedule){    
+                const result = doIUseEquipamentsAndPlaceOfSchedule()
+                lenghtPlaces = response.data.avaibilityPlaces.length; 
+
+                if(result) {
                     schedule.equipaments.map(obj => {
                         obj.checked = true
                         equipamentsSelected.push(obj.id)
@@ -115,25 +122,32 @@ function FormSchedule({ onSubmit, schedule }) {
                     setEquipaments([...JSON.parse(JSON.stringify(schedule.equipaments)), ...response.data.avaibilityEquipaments]);
                     schedule.place.checked = true
                     setPlaces([JSON.parse(JSON.stringify(schedule.place)), ...response.data.avaibilityPlaces]);
-                    lenghtPlaces = response.data.avaibilityPlaces.length+1; 
+                    lenghtPlaces = lenghtPlaces + 1
                 }
                 else {
                     setEquipaments(response.data.avaibilityEquipaments);
-                    setPlaces(response.data.avaibilityPlaces);   
-                    lenghtPlaces = response.data.avaibilityPlaces.length;  
+                    setPlaces(response.data.avaibilityPlaces);
                 }
-                retrieveData(lenghtPlaces);
-                
-            })
-            .catch(function (error) {
-                console.log(error.response);
-                Alert.alert('Erro', error.response.data.error);
-                setIsLoading(false); 
-            });
-               
-        }
-        else {
-            Alert.alert('Campos não preenchidos', 'Preencha todos os campos!');
+            }
+            else {
+                setEquipaments(response.data.avaibilityEquipaments);
+                setPlaces(response.data.avaibilityPlaces);   
+                lenghtPlaces = response.data.avaibilityPlaces.length;  
+            }
+            retrieveData(lenghtPlaces);
+            
+        })
+        .catch(function (error) {
+            console.log(error.response);
+            Alert.alert('Erro', error.response.data.error);
+            setIsLoading(false); 
+        });
+    }
+
+    function doIUseEquipamentsAndPlaceOfSchedule() {
+        if(schedule) {
+            if((schedule.initial != initial) || (schedule.final  != final)) { return false }
+            else { return true }  
         }
     }
 
