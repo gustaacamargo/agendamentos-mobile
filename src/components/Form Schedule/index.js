@@ -77,7 +77,7 @@ function FormSchedule({ onSubmit, schedule }) {
     useEffect(() => {
         if(edited) {
             setEdited(false)
-            disponibilty()
+            if(!isLoading) { disponibilty() }
         }
     }, [edited])
 
@@ -110,32 +110,24 @@ function FormSchedule({ onSubmit, schedule }) {
             },
         })
         .then(function (response) {
-            if(schedule){    
-                const result = doIUseEquipamentsAndPlaceOfSchedule()
-                lenghtPlaces = response.data.avaibilityPlaces.length; 
+            const result = doIUseEquipamentsAndPlaceOfSchedule()
+            lenghtPlaces = response.data.avaibilityPlaces.length; 
 
-                if(result) {
-                    schedule.equipaments.map(obj => {
-                        obj.checked = true
-                        equipamentsSelected.push(obj.id)
-                    })              
-                    setEquipaments([...JSON.parse(JSON.stringify(schedule.equipaments)), ...response.data.avaibilityEquipaments]);
-                    schedule.place.checked = true
-                    setPlaces([JSON.parse(JSON.stringify(schedule.place)), ...response.data.avaibilityPlaces]);
-                    lenghtPlaces = lenghtPlaces + 1
-                }
-                else {
-                    setEquipaments(response.data.avaibilityEquipaments);
-                    setPlaces(response.data.avaibilityPlaces);
-                }
+            if(result) {
+                schedule.equipaments.map(obj => {
+                    obj.checked = true
+                    equipamentsSelected.push(obj.id)
+                })              
+                setEquipaments([...JSON.parse(JSON.stringify(schedule.equipaments)), ...response.data.avaibilityEquipaments]);
+                schedule.place.checked = true
+                setPlaces([JSON.parse(JSON.stringify(schedule.place)), ...response.data.avaibilityPlaces]);
+                lenghtPlaces = lenghtPlaces + 1
             }
             else {
                 setEquipaments(response.data.avaibilityEquipaments);
-                setPlaces(response.data.avaibilityPlaces);   
-                lenghtPlaces = response.data.avaibilityPlaces.length;  
+                setPlaces(response.data.avaibilityPlaces);
             }
             retrieveData(lenghtPlaces);
-            
         })
         .catch(function (error) {
             console.log(error.response);
@@ -308,7 +300,7 @@ function FormSchedule({ onSubmit, schedule }) {
             </View>
 
             {(!showFields) && (
-                <TouchableOpacity onPress={disponibilty} style={styles.button}>
+                <TouchableOpacity onPress={() => { if(!isLoading) {disponibilty()} }} style={styles.button}>
                     <Text style={styles.buttonText}>Verficar disponibilidade</Text>
                     <ActivityIndicator animating={isLoading} size="small" color="#FFF" />   
                 </TouchableOpacity>
