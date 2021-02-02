@@ -4,7 +4,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Select2 from "react-native-select-two";
 import api from '../../services/api';
 
-function FormUser({ onSubmit, user }) {
+function FormUser({ onSubmit, user, navigation }) {
 
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
@@ -57,7 +57,7 @@ function FormUser({ onSubmit, user }) {
         setFunctionUser(user ? user.function == 'adm' ? 'adm' : 'user' : '')
     }
 
-    async function save() {    
+    function save() {    
         if(!email) { Alert.alert('Campo obrigatório', 'O campo email deve ser preenchido'); return }
         if(!fullname) { Alert.alert('Campo obrigatório', 'O campo nome completo deve ser preenchido'); return }
         if(!username) { Alert.alert('Campo obrigatório', 'O campo nome de usuário deve ser preenchido'); return }
@@ -66,7 +66,7 @@ function FormUser({ onSubmit, user }) {
         if(!campus) { Alert.alert('Campo obrigatório', 'O campo campus deve ser preenchido'); return }
 
         setIsLoading(true);
-        await onSubmit(user.id, {
+        onSubmit(user.id, {
             username,
             password,
             email,
@@ -75,8 +75,18 @@ function FormUser({ onSubmit, user }) {
             status: 'Ativo',
             campus_id: campus,                
         })
-        clear()
-        setIsLoading(false);
+        .then(function (response) {
+            clear()
+            setIsLoading(false);   
+            if(navigation) { navigation.navigate('ViewUsers') }
+            Alert.alert('Prontinho', 'Usuário salvo com sucesso!');
+        })
+        .catch(function (error) {
+            setIsLoading(false); 
+            console.log(error)
+            if(error?.response?.data?.error) { Alert.alert('Oops...', error.response.data.error) }
+            else { Alert.alert('Oops...', 'Houve um erro ao tentar cadastrar as informações') }
+        });
     }
 
     function clear() {

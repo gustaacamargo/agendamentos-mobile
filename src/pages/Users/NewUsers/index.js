@@ -4,15 +4,12 @@ import api from '../../../services/api';
 import FormUser from '../../../components/Form User';
 
 function NewUsers() {
-    async function save(id, data) {        
-        await api.post("/users", data)
-        .then(function (response) {                
-            Alert.alert('Prontinho', 'Usuário cadastrado com sucesso!');
+    async function save(id, data) {       
+        return new Promise((resolve, reject) => {
+            api.post("/users", data)
+            .then(resolve)
+            .catch(reject)
         })
-        .catch(function (error) {
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar cadastrar as informações, verifique se não há outro usuário com as mesmas informações');
-        });
     }
 
     return(

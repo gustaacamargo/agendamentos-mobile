@@ -16,22 +16,17 @@ function EditUsers({ navigation }) {
         }
     }, [navigation])
 
-    async function edit(id, data) {        
-        await api.put("/users/"+id, data)
-        .then(function (response) {   
-            navigation.navigate('ViewUsers')                
-            Alert.alert('Prontinho', 'Usuário editado com sucesso!');
-        })
-        .catch(function (error) {
-            navigation.navigate('ViewUsers')   
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar editar as informações, verifique se não há outro usuário com as mesmas informações');
-        });
+    async function edit(id, data) {   
+        return new Promise((resolve, reject) => {
+            api.put("/users/"+id, data)
+            .then(resolve)
+            .catch(reject)
+        })             
     }
 
     return(
         <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-            <FormUser onSubmit={edit} user={user}/>
+            <FormUser onSubmit={edit} user={user} navigation={navigation}/>
         </KeyboardAvoidingView>
     );
 }
