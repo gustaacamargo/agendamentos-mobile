@@ -18,22 +18,17 @@ function EditCategories({ navigation }) {
     }, [navigation])
     
     async function edit(id, data) {  
-        await api.put("/categories/"+id, data)
-        .then(function (response) {                
-            Alert.alert('Prontinho', 'Ano editado com sucesso!');
-            navigation.navigate('ViewCategories')
+        return new Promise((resolve, reject) => {
+            api.put("/categories/"+id, data)
+            .then(resolve)
+            .catch(reject)
         })
-        .catch(function (error) {
-            navigation.navigate('ViewCategories')
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar editar o ano');
-        });
     }
 
     return(
         <DismissKeyboard>
             <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-                <FormCategory onSubmit={edit} category={category}/>
+                <FormCategory onSubmit={edit} category={category} navigation={navigation}/>
             </KeyboardAvoidingView>
         </DismissKeyboard>
     );

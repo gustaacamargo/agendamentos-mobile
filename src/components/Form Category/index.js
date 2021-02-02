@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator,
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useStore } from "../../reducer";
 
-function FormCategory({ onSubmit, category }) {
+function FormCategory({ onSubmit, category, navigation }) {
     const { userLogged: { userLogged } } = useStore()
     const [description, setDescription] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -14,17 +14,28 @@ function FormCategory({ onSubmit, category }) {
         }
     }, [category]);
 
-    async function save() {   
+    function save() {   
         if(!description) { Alert.alert('Campo obrigatório', 'O campo descrição deve ser preenchido'); return }
         
         setIsLoading(true);
-        await onSubmit(category.id, {
+        onSubmit(category.id, {
             description,
             status: 'Ativo',
             campus_id: userLogged.campusId,
+        })
+        .then(function (response) {   
+            setIsLoading(false);
+            setDescription('');             
+            Alert.alert('Prontinho', 'Ano salvo com sucesso!');
+            if(navigation) { navigation.navigate('ViewCategories') }
+        })
+        .catch(function (error) {
+            console.log(error)
+            setIsLoading(false);
+            if(error?.response?.data?.error) { Alert.alert('Oops...', error.response.data.error) }
+            else { Alert.alert('Oops...', 'Houve um erro ao tentar cadastrar as informações') }
         });
-        setIsLoading(false);
-        setDescription('');
+        
     }
 
     return(

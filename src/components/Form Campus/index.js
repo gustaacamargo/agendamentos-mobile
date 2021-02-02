@@ -36,7 +36,7 @@ function FormCampus({ onSubmit, campus, navigation }) {
             setIsLoading(false);
             console.log(error)
             if(error?.response?.data?.error) { Alert.alert('Oops...', error.response.data.error) }
-            else { Alert.alert('Oops...', 'Houve um erro ao tentar editar as informações') }
+            else { Alert.alert('Oops...', 'Houve um erro ao tentar cadastrar as informações') }
         });
         
     }
