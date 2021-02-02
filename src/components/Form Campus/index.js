@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-function FormCampus({ onSubmit, campus }) {
+function FormCampus({ onSubmit, campus, navigation }) {
 
     const [city, setCity] = useState('');
     const [adress, setAdress] = useState('');
@@ -15,19 +15,30 @@ function FormCampus({ onSubmit, campus }) {
         }
     }, []);
 
-    async function save() {   
+    function save() {   
         if(!city) { Alert.alert('Campo obrigatório', 'O campo cidade deve ser preenchido'); return }
         if(!adress) { Alert.alert('Campo obrigatório', 'O campo endereço deve ser preenchido'); return }
 
         setIsLoading(true);
-        await onSubmit(campus.id, {
+        onSubmit(campus.id, {
             city,
             adress,
             status: 'Ativo',
+        })
+        .then(function (response) {  
+            setIsLoading(false);
+            setCity('');
+            setAdress('');              
+            Alert.alert('Prontinho', 'Campus editado com sucesso!');
+            if(navigation) { navigation.navigate('ViewCampus') }
+        })
+        .catch(function (error) {
+            setIsLoading(false);
+            console.log(error)
+            if(error?.response?.data?.error) { Alert.alert('Oops...', error.response.data.error) }
+            else { Alert.alert('Oops...', 'Houve um erro ao tentar editar as informações') }
         });
-        setIsLoading(false);
-        setCity('');
-        setAdress('');
+        
     }
 
     return(

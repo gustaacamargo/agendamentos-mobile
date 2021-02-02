@@ -16,22 +16,17 @@ function EditCampus({ navigation }) {
         }
     }, [navigation])
 
-    async function edit(id, data) {     
-        await api.put("/campuses/"+id, data)
-        .then(function (response) {                
-            Alert.alert('Prontinho', 'Campus editado com sucesso!');
-            navigation.navigate('ViewCampus')
+    function edit(id, data) { 
+        return new Promise((resolve, reject) => {
+            api.put("/campuses/"+id, data)
+            .then(resolve)
+            .catch(reject)
         })
-        .catch(function (error) {
-            navigation.navigate('ViewCampus')
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar editar as informações');
-        });
     }
 
     return(
         <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-            <FormCampus onSubmit={edit} campus={campus}/>
+            <FormCampus onSubmit={edit} campus={campus} navigation={navigation}/>
         </KeyboardAvoidingView>
     );
 }
