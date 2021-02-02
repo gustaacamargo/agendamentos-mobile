@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator,
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useStore } from "../../reducer";
 
-function FormCourse({ onSubmit, course }) {
+function FormCourse({ onSubmit, course, navigation }) {
     const { userLogged: { userLogged } } = useStore()
     const [name, setName] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -14,17 +14,28 @@ function FormCourse({ onSubmit, course }) {
         }
     }, []);
 
-    async function save() {   
+    function save() {   
         if(!name) { Alert.alert('Campo obrigatório', 'O campo nome deve ser preenchido'); return }
 
         setIsLoading(true);
-        await onSubmit(course.id, {
+        onSubmit(course.id, {
             name,
             status: 'Ativo',
             campus_id: userLogged.campusId,
+        })
+        .then(function (response) {  
+            setIsLoading(false);
+            setName('');
+            if(navigation) { navigation.push('ViewCourses') } 
+            Alert.alert('Prontinho', 'Curso salvo com sucesso!');
+        })
+        .catch(function (error) {
+            setIsLoading(false);
+            console.log(error)
+            if(error?.response?.data?.error) { Alert.alert('Oops...', error.response.data.error) }
+            else { Alert.alert('Oops...', 'Houve um erro ao tentar cadastrar as informações') }
         });
-        setIsLoading(false);
-        setName('');
+        
     }
 
     return(

@@ -6,15 +6,11 @@ import FormCourse from '../../../components/Form Course';
 
 function NewCourses() {
     async function save(id, data) {        
-
-        await api.post("/courses", data)
-        .then(function (response) {                
-            Alert.alert('Prontinho', 'Curso cadastrado com sucesso!');
+        return new Promise((resolve, reject) => {
+            api.post("/courses", data)
+            .then(resolve)
+            .catch(reject)
         })
-        .catch(function (error) {
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
-        });
     }
 
     return(

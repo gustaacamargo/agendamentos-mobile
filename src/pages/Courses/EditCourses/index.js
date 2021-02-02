@@ -16,22 +16,17 @@ function EditCourses({ navigation }) {
         }
     }, [navigation])
 
-    async function edit(id, data) {        
-        await api.put("/courses/"+id, data)
-        .then(function (response) {   
-            navigation.push('ViewCourses')             
-            Alert.alert('Prontinho', 'Curso editado com sucesso!');
+    async function edit(id, data) {   
+        return new Promise((resolve, reject) => {
+            api.put("/courses/"+id, data)
+            .then(resolve)
+            .catch(reject)
         })
-        .catch(function (error) {
-            navigation.push('ViewCourses')   
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar editar as informações');
-        });
     }
 
     return(
         <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-            <FormCourse onSubmit={edit} course={course}/>
+            <FormCourse onSubmit={edit} course={course} navigation={navigation}/>
         </KeyboardAvoidingView>
     );
 }
