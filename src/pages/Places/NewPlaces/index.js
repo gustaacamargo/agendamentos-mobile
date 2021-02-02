@@ -6,15 +6,11 @@ import FormPlace from '../../../components/Form Place';
 
 function NewPlaces() {
     async function save(id, data) {        
-
-        await api.post("/places", data)
-        .then(function (response) {                
-            Alert.alert('Prontinho', 'Sala cadastrada com sucesso!');
+        return new Promise((resolve, reject) => {
+            api.post("/places", data)
+            .then(resolve)
+            .catch(reject)
         })
-        .catch(function (error) {
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
-        });
     }
 
     return(

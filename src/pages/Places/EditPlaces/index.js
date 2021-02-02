@@ -17,22 +17,17 @@ function EditPlaces({ navigation }) {
         }
     }, [navigation])
 
-    async function edit(id, data) {        
-        await api.put("/places/"+id, data)
-        .then(function (response) {  
-            navigation.navigate('ViewPlaces')              
-            Alert.alert('Prontinho', 'Sala editada com sucesso!');
+    async function edit(id, data) {   
+        return new Promise((resolve, reject) => {
+            api.put("/places/"+id, data)
+            .then(resolve)
+            .catch(reject)
         })
-        .catch(function (error) {
-            navigation.navigate('ViewPlaces')
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar editar as informações');
-        });
     }
 
     return(
         <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-            <FormPlace onSubmit={edit} place={place}/>
+            <FormPlace onSubmit={edit} place={place} navigation={navigation}/>
         </KeyboardAvoidingView>
     );
 }

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator,
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useStore } from "../../reducer";
 
-function FormPlace({ onSubmit, place }) {
+function FormPlace({ onSubmit, place, navigation }) {
     const { userLogged: { userLogged } } = useStore()
 
     const [name, setName] = useState('');
@@ -27,8 +27,23 @@ function FormPlace({ onSubmit, place }) {
             capacity,
             status: 'Ativo',
             campus_id: userLogged.campusId,
+        })
+        .then(function (response) { 
+            setIsLoading(false);
+            clear()
+            if(navigation) { navigation.navigate('ViewPlaces') }    
+            Alert.alert('Prontinho', 'Sala salva com sucesso!');
+        })
+        .catch(function (error) {
+            setIsLoading(false);
+            console.log(error)
+            if(error?.response?.data?.error) { Alert.alert('Oops...', error.response.data.error) }
+            else { Alert.alert('Oops...', 'Houve um erro ao tentar cadastrar as informações') }
         });
-        setIsLoading(false);
+        
+    }
+
+    function clear() {
         setName('');
         setCapacity('');
     }
