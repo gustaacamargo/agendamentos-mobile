@@ -6,15 +6,11 @@ import FormCampus from '../../../components/Form Campus';
 
 function NewCampus() {
     async function save(id, data) {        
-
-        await api.post("/campuses", data)
-        .then(function (response) {                
-            Alert.alert('Prontinho', 'Campus cadastrado com sucesso!');
+        return new Promise((resolve, reject) => {
+            api.post("/campuses", data)
+            .then(resolve)
+            .catch(reject)
         })
-        .catch(function (error) {
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
-        });
     }
 
     return(

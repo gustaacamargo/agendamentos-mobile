@@ -29,7 +29,7 @@ function FormCampus({ onSubmit, campus, navigation }) {
             setIsLoading(false);
             setCity('');
             setAdress('');              
-            Alert.alert('Prontinho', 'Campus editado com sucesso!');
+            Alert.alert('Prontinho', 'Campus salvo com sucesso!');
             if(navigation) { navigation.navigate('ViewCampus') }
         })
         .catch(function (error) {
