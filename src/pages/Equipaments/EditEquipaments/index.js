@@ -16,22 +16,17 @@ function EditEquipaments({ navigation }) {
         }
     }, [navigation])
 
-    async function edit(id, data) {        
-        await api.put("/equipaments/"+id, data)
-        .then(function (response) {     
-            navigation.navigate('ViewEquipaments')
-            Alert.alert('Prontinho', 'Equipamento editado com sucesso!');
+    function edit(id, data) {    
+        return new Promise((resolve, reject) => {
+            api.put("/equipaments/"+id, data)
+            .then(resolve)
+            .catch(reject)
         })
-        .catch(function (error) {
-            navigation.navigate('ViewEquipaments')
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar editar as informações');
-        });
     }
 
     return(
         <KeyboardAvoidingView style={styles.main} behavior="padding" enabled>
-            <FormEquipament onSubmit={edit} equipament={equipament}/>
+            <FormEquipament onSubmit={edit} equipament={equipament} navigation={navigation}/>
         </KeyboardAvoidingView>
     );
 }

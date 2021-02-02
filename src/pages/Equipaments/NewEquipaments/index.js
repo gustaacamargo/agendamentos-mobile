@@ -6,15 +6,11 @@ import FormEquipament from '../../../components/Form Equipament';
 
 function NewEquipaments() {
     async function save(id, data) {        
-
-        await api.post("/equipaments", data)
-        .then(function (response) {                
-            Alert.alert('Prontinho', 'Equipamento cadastrado com sucesso!');
+        return new Promise((resolve, reject) => {
+            api.post("/equipaments", data)
+            .then(resolve)
+            .catch(reject)
         })
-        .catch(function (error) {
-            console.log(error)
-            Alert.alert('Oops...', 'Houve um erro ao tentar visualizar as informações');
-        });
     }
 
     return(

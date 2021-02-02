@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator,
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useStore } from "../../reducer";
 
-function FormEquipament({ onSubmit, equipament }) {
+function FormEquipament({ onSubmit, equipament, navigation }) {
     const { userLogged: { userLogged } } = useStore()
 
     const [name, setName] = useState('');
@@ -19,20 +19,34 @@ function FormEquipament({ onSubmit, equipament }) {
         }
     }, []);
 
-    async function save() { 
+    function save() { 
         if(!name) { Alert.alert('Campo obrigatório', 'O campo nome deve ser preenchido'); return }       
         if(!brand) { Alert.alert('Campo obrigatório', 'O campo marca deve ser preenchido'); return }       
         if(!equityNumber) { Alert.alert('Campo obrigatório', 'O campo número de patrimônio deve ser preenchido'); return }       
 
         setIsLoading(true);
-        await onSubmit(equipament.id, {
+        onSubmit(equipament.id, {
             name,
             brand,
             equityNumber,
             status: 'Ativo',
             campus_id: userLogged.campusId,
         })
-        setIsLoading(false);
+        .then(function (response) {     
+            clear()
+            setIsLoading(false);
+            if(navigation) { navigation.navigate('ViewEquipaments') }
+            Alert.alert('Prontinho', 'Equipamento salvo com sucesso!');
+        })
+        .catch(function (error) {
+            console.log(error)
+            setIsLoading(false);
+            if(error?.response?.data?.error) { Alert.alert('Oops...', error.response.data.error) }
+            else { Alert.alert('Oops...', 'Houve um erro ao tentar cadastrar as informações') }
+        });
+    }
+
+    function clear() {
         setName('');
         setBrand('');
         setEquityNumber('');
