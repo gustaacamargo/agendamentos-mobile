@@ -83,7 +83,6 @@ function Login( {navigation} ) {
             <DismissKeyboard>
                 <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
 
-                    <StatusBar backgroundColor="#F5F5F5" barStyle="dark-content"/>
                     <Image style={styles.logo} source={Logo} resizeMode="contain"/>
                     {(error) && <Text style={styles.errorText}>{error}</Text>}
                     <TextInput 
