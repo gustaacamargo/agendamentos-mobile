@@ -70,7 +70,7 @@ function ViewEquipaments({ navigation }) {
         .catch(function (error) {
             setIsDeleting(false)
             console.log(error)
-            Alert.alert('Oops...', 'Houve um tentar deletar as informações, tente novamente!');
+            Alert.alert('Oops...', 'Houve um tentar restaurar as informações, tente novamente!');
         });
     }
 

@@ -55,7 +55,7 @@ function ViewCourses({ navigation }) {
         .catch(function (error) {
             setIsDeleting(false)
             console.log(error)
-            Alert.alert('Oops...', 'Houve um tentar visualizar as informações, tente novamente!');
+            Alert.alert('Oops...', 'Houve um tentar deletar as informações, tente novamente!');
         });
     }
 
@@ -70,7 +70,7 @@ function ViewCourses({ navigation }) {
         .catch(function (error) {
             setIsDeleting(false)
             console.log(error)
-            Alert.alert('Oops...', 'Houve um tentar visualizar as informações, tente novamente!');
+            Alert.alert('Oops...', 'Houve um tentar restaurar as informações, tente novamente!');
         });
     }
 

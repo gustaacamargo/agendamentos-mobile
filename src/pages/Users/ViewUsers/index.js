@@ -61,6 +61,21 @@ function ViewUsers({ navigation }) {
         });
     }
 
+    async function restoreUser(id) {
+        setIsDeleting(true)
+        await api.post(`/users/restore/${id}`)
+        .then(function (response) {
+            setUser({})
+            Alert.alert('Prontinho', 'Usuário restaurado com sucesso');
+            setIsDeleting(false)
+        })
+        .catch(function (error) {
+            setIsDeleting(false)
+            console.log(error)
+            Alert.alert('Oops...', 'Houve um tentar restaurar o usuário, tente novamente!');
+        });
+    }
+
     function renderCard({ item }) {
         return(
             <CardUser isOnModal={false} onOpen={onOpen} item={item} setItem={setUser}/>
@@ -79,7 +94,7 @@ function ViewUsers({ navigation }) {
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
             <Modalize adjustToContentHeight={true} ref={modalizeRef}>
-                <CardUser navigation={navigation} isOnModal={true} onOpen={onOpen} item={user} setItem={setUser} deleteUser={deleteUser} isDeleting={isDeleting}/>
+                <CardUser navigation={navigation} isOnModal={true} onOpen={onOpen} item={user} setItem={setUser} deleteUser={deleteUser} isDeleting={isDeleting} restoreUser={restoreUser}/>
             </Modalize>
 
             {users.length <= 0 && (
