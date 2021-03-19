@@ -59,6 +59,21 @@ function ViewPlaces({ navigation }) {
         });
     }
 
+    async function restorePlace(id) {
+        setIsDeleting(true)
+        await api.post(`/places/restore/${id}`)
+        .then(function (response) {
+            setPlace({})
+            Alert.alert('Prontinho', 'Sala restaurada com sucesso');
+            setIsDeleting(false)
+        })
+        .catch(function (error) {
+            setIsDeleting(false)
+            console.log(error)
+            Alert.alert('Oops...', 'Houve um tentar deletar as informações, tente novamente!');
+        });
+    }
+
     function renderCard({ item }) {
         return(
             <CardPlace isOnModal={false} onOpen={onOpen} item={item} setItem={setPlace}/>
@@ -77,7 +92,7 @@ function ViewPlaces({ navigation }) {
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
             <Modalize adjustToContentHeight={true} ref={modalizeRef}>
-                <CardPlace navigation={navigation} isOnModal={true} onOpen={onOpen} item={place} setItem={setPlace} deletePlace={deletePlace} isDeleting={isDeleting}/>
+                <CardPlace navigation={navigation} isOnModal={true} onOpen={onOpen} item={place} setItem={setPlace} deletePlace={deletePlace} isDeleting={isDeleting} restorePlace={restorePlace}/>
             </Modalize>
 
             {places.length <= 0 && (
