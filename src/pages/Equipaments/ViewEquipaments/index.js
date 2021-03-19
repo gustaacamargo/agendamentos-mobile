@@ -59,6 +59,21 @@ function ViewEquipaments({ navigation }) {
         });
     }
 
+    async function restoreEquipament(id) {
+        setIsDeleting(true)
+        await api.post(`/equipaments/restore/${id}`)
+        .then(function (response) {
+            setEquipament({})
+            Alert.alert('Prontinho', 'Equipamento restaurado com sucesso');
+            setIsDeleting(false)
+        })
+        .catch(function (error) {
+            setIsDeleting(false)
+            console.log(error)
+            Alert.alert('Oops...', 'Houve um tentar deletar as informações, tente novamente!');
+        });
+    }
+
     function renderCard({ item }) {
         return(
             <CardEquipament isOnModal={false} onOpen={onOpen} item={item} setItem={setEquipament}/>
@@ -77,7 +92,7 @@ function ViewEquipaments({ navigation }) {
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
             <Modalize adjustToContentHeight={true} ref={modalizeRef}>
-                <CardEquipament navigation={navigation} isOnModal={true} onOpen={onOpen} item={equipament} setItem={setEquipament} deleteEquipament={deleteEquipament} isDeleting={isDeleting}/>
+                <CardEquipament navigation={navigation} isOnModal={true} onOpen={onOpen} item={equipament} setItem={setEquipament} deleteEquipament={deleteEquipament} isDeleting={isDeleting} restoreEquipament={restoreEquipament}/>
             </Modalize>
 
             {equipaments.length <= 0 && (
