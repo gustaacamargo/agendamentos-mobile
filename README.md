@@ -21,7 +21,8 @@ Para a sua construção foi utilizado o Expo/React Native + Redux.
 
 <div align="center">
   <img src="https://imgur.com/9hdrNjJ.png" />
-  <img style="margin-top: 20px" src="https://imgur.com/3OwvfJF.png" />
+  &nbsp;
+  <img src="https://imgur.com/3OwvfJF.png" />
 </div>
 
 ---
