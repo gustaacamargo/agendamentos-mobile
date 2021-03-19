@@ -25,6 +25,10 @@ function ViewUsers({ navigation }) {
         modalizeRef.current?.open();
     };
 
+    const closeModal = () => {
+        modalizeRef.current?.close();
+    };
+
     useEffect(() => {
         retrieveUsers();
     }, [user]);
@@ -53,6 +57,7 @@ function ViewUsers({ navigation }) {
             setUser({})
             Alert.alert('Prontinho', 'Usuário deletado com sucesso');
             setIsDeleting(false)
+            closeModal()
         })
         .catch(function (error) {
             setIsDeleting(false)
@@ -68,6 +73,7 @@ function ViewUsers({ navigation }) {
             setUser({})
             Alert.alert('Prontinho', 'Usuário restaurado com sucesso');
             setIsDeleting(false)
+            closeModal()
         })
         .catch(function (error) {
             setIsDeleting(false)
