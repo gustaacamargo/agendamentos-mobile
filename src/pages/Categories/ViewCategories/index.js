@@ -59,6 +59,21 @@ function ViewCategories({ navigation }) {
         });
     }
 
+    async function restoreCategory(id) {
+        setIsDeleting(true)
+        await api.post(`/categories/restore/${id}`)
+        .then(function (response) {
+            setIsDeleting(false)
+            setCategory({})
+            Alert.alert('Prontinho', 'Ano restaurado com sucesso');
+        })
+        .catch(function (error) {
+            setIsDeleting(false)
+            console.log(error)
+            Alert.alert('Oops...', 'Houve um tentar visualizar as informações, tente novamente!');
+        });
+    }
+
     function renderCard({ item }) {
         return(
             <CardCategory isOnModal={false} onOpen={onOpen} item={item} setItem={setCategory}/>
@@ -77,7 +92,7 @@ function ViewCategories({ navigation }) {
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
             <Modalize adjustToContentHeight={true} ref={modalizeRef}>
-                <CardCategory navigation={navigation} isOnModal={true} onOpen={onOpen} item={category} setItem={setCategory} deleteCategory={deleteCategory} isDeleting={isDeleting}/>
+                <CardCategory navigation={navigation} isOnModal={true} onOpen={onOpen} item={category} setItem={setCategory} deleteCategory={deleteCategory} isDeleting={isDeleting} restoreCategory={restoreCategory}/>
             </Modalize>
 
             {categories.length <= 0 && (

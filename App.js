@@ -12,7 +12,7 @@ export default function App() {
       <SafeAreaView style={{ flex:1, backgroundColor: '#042963' }} forceInset={{'top': 'never'}}>
         <StateProvider store={Store}>
         <StatusBar barStyle="light-content"/>
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, backgroundColor: '#fff000' }}>
             <AppNavigator></AppNavigator>
           </View>
         </StateProvider>

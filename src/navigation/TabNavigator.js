@@ -25,7 +25,7 @@ const navOptions = (navigation) => ({
             <MaterialIcons 
                 name={`${iconName}`} 
                 style={{fontSize: 30}} 
-                color="#FFF"/>
+                color={tintColor}/>
         );
     },
     tabBarOnPress: ({navigation, defaultHandler}) => {
@@ -37,9 +37,9 @@ const navOptions = (navigation) => ({
 const tabOptions = {
     activeBackgroundColor: '#042963',
     inactiveBackgroundColor: '#042963',
-    activeTintColor: 'white',
-    inactiveTintColor: 'gray',
-    safeAreaInset: "bottom"
+    activeTintColor: '#FFF',
+    inactiveTintColor: '#848484ed',
+    safeAreaInset: { bottom: 'never' }
 }
 
 const options = {
