@@ -1,9 +1,9 @@
 import React from 'react'
-import { Text, TouchableOpacity, View, StyleSheet, Alert } from 'react-native'
+import { Text, TouchableOpacity, View, StyleSheet, Alert, ActivityIndicator } from 'react-native'
 import moment from 'moment'
 import { MaterialIcons } from '@expo/vector-icons';
 
-export default function CardSchedule({ isOnModal, onOpen, item, setItem, editSchedule, deleteSchedule, navigation }) {
+export default function CardSchedule({ isOnModal, onOpen, item, setItem, editSchedule, deleteSchedule, navigation, isDeleting }) {
 
     async function confirmDelete(id) {
         Alert.alert(
@@ -57,7 +57,9 @@ export default function CardSchedule({ isOnModal, onOpen, item, setItem, editSch
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.row} onPress={() => confirmDelete(item.id)}>
                                 <MaterialIcons name="delete" style={styles.buttons} color="#FFF"/>
-                                {/* <ActivityIndicator animating={isLoading} size="small" color="#000" />    */}
+                                {isDeleting && (
+                                    <ActivityIndicator animating={isDeleting} size="small" color="#000" />   
+                                )}  
                             </TouchableOpacity>
                         </View>
                     )}

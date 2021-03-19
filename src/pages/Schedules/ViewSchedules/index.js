@@ -23,6 +23,7 @@ function ViewSchedule({ navigation }) {
                                             {value: "Noite", label: "Noite"}]);
     const [period, setPeriod] = useState('');
     const modalizeRef = useRef(null);
+    const [isDeleting, setIsDeleting] = useState(false)
 
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -35,26 +36,34 @@ function ViewSchedule({ navigation }) {
         modalizeRef.current?.open();
     };
 
+    const closeModal = () => {
+        modalizeRef.current?.close();
+    };
+
     const onRefresh = useCallback(() => {
         filter();
     }, [isRefreshing]);
 
     async function deleteSchedule(id) {
+        setIsDeleting(true)
         await api.delete(`/schedules/${id}`)
         .then(function (response) {
             Alert.alert('Prontinho', 'Agendamento deletado com sucesso');
             filter();
+            closeModal()
         })
         .catch(function (error) {
             console.log(error)
             Alert.alert('Oops...', 'Houve um tentar visualizar as informações, tente novamente!');
-        });
+        })
+        .finally(() => setIsDeleting(false))
     }
 
     async function editSchedule(id, data) {        
 
         await api.put(`/schedules/${id}`, data)
-        .then(function (response) {                
+        .then(function (response) {      
+            closeModal()          
             Alert.alert('Prontinho', 'Agendamento editado com sucesso!');
             filter();
         })
@@ -131,7 +140,7 @@ function ViewSchedule({ navigation }) {
                 </View>
             )}
             <Modalize adjustToContentHeight={true} ref={modalizeRef}>
-                <CardSchedule navigation={navigation} isOnModal={true} onOpen={onOpen} item={schedule} setItem={setSchedule} editSchedule={editSchedule} deleteSchedule={deleteSchedule}/>
+                <CardSchedule navigation={navigation} isOnModal={true} onOpen={onOpen} item={schedule} setItem={setSchedule} editSchedule={editSchedule} deleteSchedule={deleteSchedule} isDeleting={isDeleting} />
             </Modalize>
             <DateTimePickerModal
                 isVisible={isDatePickerVisible}

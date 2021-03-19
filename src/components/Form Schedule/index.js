@@ -328,7 +328,7 @@ function FormSchedule({ onSubmit, schedule }) {
                                 isSelectSingle
                                 style={styles.input}
                                 colorTheme="blue"
-                                popupTitle="Selecione um turno"
+                                popupTitle="Selecione uma sala"
                                 searchPlaceHolderText="Pesquisar"
                                 title="Sala"
                                 data={places}
@@ -348,7 +348,7 @@ function FormSchedule({ onSubmit, schedule }) {
                                 isSelectSingle
                                 style={styles.input}
                                 colorTheme="blue"
-                                popupTitle="Selecione um turno"
+                                popupTitle="Selecione um ano"
                                 searchPlaceHolderText="Pesquisar"
                                 title="Ano"
                                 data={categories}
@@ -373,7 +373,7 @@ function FormSchedule({ onSubmit, schedule }) {
                                     isSelectSingle
                                     style={styles.input}
                                     colorTheme="blue"
-                                    popupTitle="Selecione um turno"
+                                    popupTitle="Selecione um solicitante"
                                     searchPlaceHolderText="Pesquisar"
                                     title="Solicitante"
                                     data={users}
@@ -394,7 +394,7 @@ function FormSchedule({ onSubmit, schedule }) {
                                 isSelectSingle
                                 style={styles.input}
                                 colorTheme="blue"
-                                popupTitle="Selecione um turno"
+                                popupTitle="Selecione um curso"
                                 searchPlaceHolderText="Pesquisar"
                                 title="Curso"
                                 data={courses}
@@ -413,7 +413,7 @@ function FormSchedule({ onSubmit, schedule }) {
                             <Select2
                                 style={styles.input}
                                 colorTheme="blue"
-                                popupTitle="Selecione um turno"
+                                popupTitle="Selecione um ou vários equipamentos"
                                 searchPlaceHolderText="Pesquisar"
                                 title="Equipamento"
                                 data={equipaments}
