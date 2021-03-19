@@ -23,6 +23,10 @@ function ViewPlaces({ navigation }) {
         modalizeRef.current?.open();
     };
 
+    const closeModal = () => {
+        modalizeRef.current?.close();
+    };
+
     useEffect(() => {
         retrievePlaces();
     }, [place]);
@@ -51,6 +55,7 @@ function ViewPlaces({ navigation }) {
             setPlace({})
             Alert.alert('Prontinho', 'Sala deletada com sucesso');
             setIsDeleting(false)
+            closeModal()
         })
         .catch(function (error) {
             setIsDeleting(false)
@@ -66,6 +71,7 @@ function ViewPlaces({ navigation }) {
             setPlace({})
             Alert.alert('Prontinho', 'Sala restaurada com sucesso');
             setIsDeleting(false)
+            closeModal()
         })
         .catch(function (error) {
             setIsDeleting(false)
