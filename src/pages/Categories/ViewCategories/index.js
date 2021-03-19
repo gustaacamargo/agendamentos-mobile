@@ -23,6 +23,10 @@ function ViewCategories({ navigation }) {
         modalizeRef.current?.open();
     };
 
+    const closeModal = () => {
+        modalizeRef.current?.close();
+    };
+
     useEffect(() => {
         retrieveCategories();
     }, [category]);
@@ -51,6 +55,7 @@ function ViewCategories({ navigation }) {
             setIsDeleting(false)
             setCategory({})
             Alert.alert('Prontinho', 'Ano deletado com sucesso');
+            closeModal()
         })
         .catch(function (error) {
             setIsDeleting(false)
@@ -66,6 +71,7 @@ function ViewCategories({ navigation }) {
             setIsDeleting(false)
             setCategory({})
             Alert.alert('Prontinho', 'Ano restaurado com sucesso');
+            closeModal()
         })
         .catch(function (error) {
             setIsDeleting(false)
