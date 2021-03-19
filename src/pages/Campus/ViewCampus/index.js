@@ -23,6 +23,10 @@ function ViewCampus({ navigation }) {
         modalizeRef.current?.open();
     };
 
+    const closeModal = () => {
+        modalizeRef.current?.close();
+    };
+
     useEffect(() => {
         retrieveCampuses();
     }, [campus]);
@@ -51,6 +55,7 @@ function ViewCampus({ navigation }) {
             setCampus({})
             setIsDeleting(false)
             Alert.alert('Prontinho', 'Campus deletado com sucesso');
+            closeModal()
         })
         .catch(function (error) {
             setIsDeleting(false)
@@ -66,6 +71,7 @@ function ViewCampus({ navigation }) {
             setCampus({})
             setIsDeleting(false)
             Alert.alert('Prontinho', 'Campus restaurado com sucesso');
+            closeModal()
         })
         .catch(function (error) {
             setIsDeleting(false)
