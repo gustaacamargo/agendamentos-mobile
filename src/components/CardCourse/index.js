@@ -3,14 +3,14 @@ import { Text, TouchableOpacity, View, StyleSheet, Alert } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons';
 import { ActivityIndicator } from 'react-native';
 
-export default function CardCourse({ isOnModal, onOpen, item, setItem, deleteCourse, isDeleting, navigation }) {
+export default function CardCourse({ isOnModal, onOpen, item, setItem, deleteCourse, isDeleting, navigation, restoreCourse }) {
 
-    async function confirmDelete(id) {
+    async function confirm(id, type) {
         Alert.alert(
             'Confirmação',
-            'Realmente deseja excluir esse curso?',
+            type === 'delete' ? 'Realmente deseja excluir esse curso?' : 'Realmente deseja restaurar esse curso?',
             [
-                {text: 'Sim', onPress: () => deleteCourse(id)},
+                {text: 'Sim', onPress: () => type === 'delete' ? deleteCourse(id) : restoreCourse(id)},
                 {text: 'Não', style: 'cancel'},
             ],
             { cancelable: false }
@@ -30,13 +30,23 @@ export default function CardCourse({ isOnModal, onOpen, item, setItem, deleteCou
 
             {isOnModal && (
                 <>
-                    {(item.status === 'Ativo') && (
+                    {(item.status === 'Ativo') ? (
                         <View style={styles.buttonsGroup}>
                             <TouchableOpacity onPress={() => navigation.push('EditCourses', { course: item })} style={styles.row}>
                                 <MaterialIcons name="edit" style={[styles.buttons, { marginLeft: 0 }]} color="#FFF"/>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.row} onPress={() => confirmDelete(item.id)}>
+                            <TouchableOpacity style={styles.row} onPress={() => confirm(item.id, 'delete')}>
                                 <MaterialIcons name="delete" style={styles.buttons} color="#FFF"/>
+                                {isDeleting && (
+                                    <ActivityIndicator animating={isDeleting} size="small" color="#000" />   
+                                )}
+                            </TouchableOpacity>
+                        </View>
+                    ) : (
+                        <View style={styles.center}>
+                            <TouchableOpacity style={[styles.row, styles.center, { marginTop: 15 }]} onPress={() => confirm(item.id, 'restore')}>
+                                <MaterialIcons name="restore-from-trash" style={styles.buttons} color="#FFF"/>
+                                <Text style={{ fontSize: 16, marginLeft: 5 }}>Restaurar</Text>
                                 {isDeleting && (
                                     <ActivityIndicator animating={isDeleting} size="small" color="#000" />   
                                 )}
@@ -79,6 +89,10 @@ const styles = StyleSheet.create({
         color: (status == 'Confirmado') ? '#555' : '#FF0000', 
         fontSize: 15
     }),
+    center: { 
+        alignItems: 'center', 
+        justifyContent: 'center' 
+    },
     line: {
         marginBottom: 12, 
         borderBottomColor: '#CCC', 

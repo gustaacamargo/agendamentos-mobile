@@ -59,6 +59,21 @@ function ViewCourses({ navigation }) {
         });
     }
 
+    async function restoreCourse(id) {
+        setIsDeleting(true)
+        await api.post(`/courses/restore/${id}`)
+        .then(function (response) {
+            setCourse({})
+            setIsDeleting(false)
+            Alert.alert('Prontinho', 'Curso restaurado com sucesso');
+        })
+        .catch(function (error) {
+            setIsDeleting(false)
+            console.log(error)
+            Alert.alert('Oops...', 'Houve um tentar visualizar as informações, tente novamente!');
+        });
+    }
+
     function renderCard({ item }) {
         return(
             <CardCourse isOnModal={false} onOpen={onOpen} item={item} setItem={setCourse}/>
@@ -77,7 +92,7 @@ function ViewCourses({ navigation }) {
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
             <Modalize adjustToContentHeight={true} ref={modalizeRef}>
-                <CardCourse navigation={navigation} isOnModal={true} onOpen={onOpen} item={course} setItem={setCourse} deleteCourse={deleteCourse} isDeleting={isDeleting}/>
+                <CardCourse navigation={navigation} isOnModal={true} onOpen={onOpen} item={course} setItem={setCourse} deleteCourse={deleteCourse} isDeleting={isDeleting} restoreCourse={restoreCourse}/>
             </Modalize>
 
             {courses.length <= 0 && (
