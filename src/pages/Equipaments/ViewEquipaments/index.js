@@ -23,6 +23,10 @@ function ViewEquipaments({ navigation }) {
         modalizeRef.current?.open();
     };
 
+    const closeModal = () => {
+        modalizeRef.current?.close();
+    };
+
     useEffect(() => {
         retrieveEquipaments();
     }, [equipament]);
@@ -51,6 +55,7 @@ function ViewEquipaments({ navigation }) {
             setEquipament({})
             Alert.alert('Prontinho', 'Equipamento deletado com sucesso');
             setIsDeleting(false)
+            closeModal()
         })
         .catch(function (error) {
             setIsDeleting(false)
@@ -66,6 +71,7 @@ function ViewEquipaments({ navigation }) {
             setEquipament({})
             Alert.alert('Prontinho', 'Equipamento restaurado com sucesso');
             setIsDeleting(false)
+            closeModal()
         })
         .catch(function (error) {
             setIsDeleting(false)
