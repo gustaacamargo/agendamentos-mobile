@@ -59,6 +59,21 @@ function ViewCampus({ navigation }) {
         });
     }
 
+    async function restoreCampus(id) {
+        setIsDeleting(true)
+        await api.post(`/campuses/restore/${id}`)
+        .then(function (response) {
+            setCampus({})
+            setIsDeleting(false)
+            Alert.alert('Prontinho', 'Campus restaurado com sucesso');
+        })
+        .catch(function (error) {
+            setIsDeleting(false)
+            console.log(error)
+            Alert.alert('Oops...', 'Houve um tentar visualizar as informações, tente novamente!');
+        });
+    }
+
     function renderCard({ item }) {
         return(
             <CardCampus isOnModal={false} onOpen={onOpen} item={item} setItem={setCampus}/>
@@ -77,7 +92,7 @@ function ViewCampus({ navigation }) {
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
             <Modalize adjustToContentHeight={true} ref={modalizeRef}>
-                <CardCampus navigation={navigation} isOnModal={true} onOpen={onOpen} item={campus} setItem={setCampus} deleteCampus={deleteCampus} isDeleting={isDeleting}/>
+                <CardCampus navigation={navigation} isOnModal={true} onOpen={onOpen} item={campus} setItem={setCampus} deleteCampus={deleteCampus} isDeleting={isDeleting} restoreCampus={restoreCampus}/>
             </Modalize>
 
             {campuses.length <= 0 && (
