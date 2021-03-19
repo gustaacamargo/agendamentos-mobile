@@ -23,6 +23,10 @@ function ViewCourses({ navigation }) {
         modalizeRef.current?.open();
     };
 
+    const closeModal = () => {
+        modalizeRef.current?.close();
+    };
+
     useEffect(() => {
         retrieveCourses();
     }, [course]);
@@ -51,6 +55,7 @@ function ViewCourses({ navigation }) {
             setCourse({})
             setIsDeleting(false)
             Alert.alert('Prontinho', 'Curso deletado com sucesso');
+            closeModal()
         })
         .catch(function (error) {
             setIsDeleting(false)
@@ -66,6 +71,7 @@ function ViewCourses({ navigation }) {
             setCourse({})
             setIsDeleting(false)
             Alert.alert('Prontinho', 'Curso restaurado com sucesso');
+            closeModal()
         })
         .catch(function (error) {
             setIsDeleting(false)
