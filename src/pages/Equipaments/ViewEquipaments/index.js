@@ -97,7 +97,7 @@ function ViewEquipaments({ navigation }) {
                 keyExtractor={(item, index) => index.toString()}
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
-            <Modalize adjustToContentHeight={true} ref={modalizeRef}>
+            <Modalize modalTopOffset={200} ref={modalizeRef}>
                 <CardEquipament navigation={navigation} isOnModal={true} onOpen={onOpen} item={equipament} setItem={setEquipament} deleteEquipament={deleteEquipament} isDeleting={isDeleting} restoreEquipament={restoreEquipament}/>
             </Modalize>
 

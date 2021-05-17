@@ -97,7 +97,7 @@ function ViewPlaces({ navigation }) {
                 keyExtractor={(item, index) => index.toString()}
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
-            <Modalize adjustToContentHeight={true} ref={modalizeRef}>
+            <Modalize modalTopOffset={200} ref={modalizeRef}>
                 <CardPlace navigation={navigation} isOnModal={true} onOpen={onOpen} item={place} setItem={setPlace} deletePlace={deletePlace} isDeleting={isDeleting} restorePlace={restorePlace}/>
             </Modalize>
 

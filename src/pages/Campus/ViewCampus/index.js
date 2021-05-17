@@ -97,7 +97,7 @@ function ViewCampus({ navigation }) {
                 keyExtractor={(item, index) => index.toString()}
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
-            <Modalize adjustToContentHeight={true} ref={modalizeRef}>
+            <Modalize modalTopOffset={200} ref={modalizeRef}>
                 <CardCampus navigation={navigation} isOnModal={true} onOpen={onOpen} item={campus} setItem={setCampus} deleteCampus={deleteCampus} isDeleting={isDeleting} restoreCampus={restoreCampus}/>
             </Modalize>
 

@@ -97,7 +97,7 @@ function ViewCourses({ navigation }) {
                 keyExtractor={(item, index) => index.toString()}
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
-            <Modalize adjustToContentHeight={true} ref={modalizeRef}>
+            <Modalize modalTopOffset={200} ref={modalizeRef}>
                 <CardCourse navigation={navigation} isOnModal={true} onOpen={onOpen} item={course} setItem={setCourse} deleteCourse={deleteCourse} isDeleting={isDeleting} restoreCourse={restoreCourse}/>
             </Modalize>
 

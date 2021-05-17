@@ -99,7 +99,7 @@ function ViewUsers({ navigation }) {
                 keyExtractor={(item, index) => index.toString()}
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
-            <Modalize adjustToContentHeight={true} ref={modalizeRef}>
+            <Modalize modalTopOffset={200} ref={modalizeRef}>
                 <CardUser navigation={navigation} isOnModal={true} onOpen={onOpen} item={user} setItem={setUser} deleteUser={deleteUser} isDeleting={isDeleting} restoreUser={restoreUser}/>
             </Modalize>
 

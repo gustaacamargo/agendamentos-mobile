@@ -139,7 +139,7 @@ function ViewSchedule({ navigation }) {
                     <Text style={{ color: '#777', fontSize: 16, fontWeight: '500' }}>Nenhum agendamento para este dia</Text>
                 </View>
             )}
-            <Modalize adjustToContentHeight={true} ref={modalizeRef}>
+            <Modalize ref={modalizeRef} modalTopOffset={200}>
                 <CardSchedule navigation={navigation} isOnModal={true} onOpen={onOpen} item={schedule} setItem={setSchedule} editSchedule={editSchedule} deleteSchedule={deleteSchedule} isDeleting={isDeleting} />
             </Modalize>
             <DateTimePickerModal
