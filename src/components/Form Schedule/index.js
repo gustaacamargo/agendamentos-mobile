@@ -278,7 +278,7 @@ function FormSchedule({ onSubmit, schedule }) {
                 <View style={styles.card}>
                     <Text style={styles.titleText}>Data *</Text>
                     <TouchableOpacity style={styles.input} onPress={() => {showDatePicker('date', 'date'); onClickDateOrHour()}}>
-                        <Text style={!date && styles.placeholder}>{date || "Data"}</Text>
+                        <Text style={!date ? styles.placeholder : { color: "#000" }}>{date || "Data"}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -287,13 +287,13 @@ function FormSchedule({ onSubmit, schedule }) {
                     <View style={{flex: 1, marginRight: 2}}>
                         <Text style={styles.titleText}>Início *</Text>
                         <TouchableOpacity style={styles.input} onPress={() => {showDatePicker('time', 'initial'); onClickDateOrHour()}}>
-                            <Text style={!initial && styles.placeholder}>{initial || "Início"}</Text>
+                            <Text style={!initial ? styles.placeholder : { color: "#000" }}>{initial || "Início"}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{flex: 1, marginLeft: 2}}>
                         <Text style={styles.titleText}>Final *</Text>
                         <TouchableOpacity style={styles.input} onPress={() => {showDatePicker('time', 'final'); onClickDateOrHour()}}>
-                            <Text style={!final && styles.placeholder}>{final || "Final"}</Text>
+                            <Text style={!final ? styles.placeholder : { color: "#000" }}>{final || "Final"}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
