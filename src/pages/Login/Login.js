@@ -4,6 +4,8 @@ import DismissKeyboard from '../../utils/dismissKeyboard';
 import Logo from '../../../assets/logo.png';
 import api from '../../services/api';
 import { useDispatch } from '../../reducer';
+import { Platform } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 function Login( {navigation} ) {
     const { userLoggedDispatch } = useDispatch()
@@ -81,7 +83,7 @@ function Login( {navigation} ) {
     return(
         <ImageBackground source={require("../../../assets/background.png")} style={{ flex: 1 }} imageStyle={{ resizeMode: "cover", flex: 1 }}>
             <DismissKeyboard>
-                <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+                <KeyboardAwareScrollView contentContainerStyle={styles.container}>
 
                     <Image style={styles.logo} source={Logo} resizeMode="contain"/>
                     {(error) && <Text style={styles.errorText}>{error}</Text>}
@@ -110,7 +112,7 @@ function Login( {navigation} ) {
                     <View style={styles.loading}>
                         <ActivityIndicator size="large" color="#FFF" />    
                     </View>)}
-                </KeyboardAvoidingView>
+                </KeyboardAwareScrollView>
             </DismissKeyboard>
         </ImageBackground>
 
