@@ -11,6 +11,8 @@ import CardSchedule from '../../../components/CardSchedule';
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { NavigationEvents } from 'react-navigation';
+import Picker from 'react-native-picker-select'
+import { Icon } from "react-native-elements";
 
 function ViewSchedule({ navigation }) {
     
@@ -74,6 +76,7 @@ function ViewSchedule({ navigation }) {
     }
 
     async function filter() {
+        if(!date) {Alert.alert('Campo não preenchido', 'A data deve ser preenchida'); return}
         let dateFilter = moment().format('YYYY-MM-DD')
         let periodFilter = ""
 
@@ -111,16 +114,19 @@ function ViewSchedule({ navigation }) {
                 <TouchableOpacity style={{ backgroundColor: "#FFF", width: screenWidth * 0.369, height: 41, marginRight: 20, paddingLeft: 15, paddingVertical: 13, borderRadius: 11, justifyContent: 'center' }} onPress={() => {setDatePickerVisibility(true)}}>
                     <Text style={!date ? { color: '#ccc' } : { color: '#000' }} >{date || "Data"}</Text>
                 </TouchableOpacity>
-                <View style={{ backgroundColor: "#FFF", width: screenWidth * 0.369, height: 41, paddingLeft: 10, paddingVertical: 13, borderRadius: 11, alignItems: 'center', justifyContent: 'center' }} placeholder="Turno">
-                    <RNPickerSelect
-                        placeholder={{ label: 'Turno', }}
-                        onValueChange={(value) => setPeriod(value)}
-                        style={{
-                            inputAndroid: { alignItems: 'center', fontSize: 8, color: '#000' }
-                        }}
-                        items={periods}
-                    />
-                </View>
+                <Picker
+                    onValueChange={setPeriod}
+                    items={periods}
+                    placeholder={{ label: "Turno", value: null }}
+                    style={{
+                        inputAndroid: { backgroundColor: "#FFF", width: screenWidth * 0.369, height: 41, paddingLeft: 10, paddingVertical: 13, borderRadius: 11, alignItems: 'center', justifyContent: 'center', color: '#000' },
+                        inputIOS: { backgroundColor: "#FFF", width: screenWidth * 0.369, height: 41, paddingLeft: 10, paddingVertical: 13, borderRadius: 11, alignItems: 'center', justifyContent: 'center', color: '#000' },
+                        placeholder: { backgroundColor: "#FFF", width: screenWidth * 0.369, height: 41, paddingLeft: 10, paddingVertical: 13, borderRadius: 11, alignItems: 'center', justifyContent: 'center' }
+                    }}
+                    value={period}
+                    useNativeAndroidPickerStyle={false}
+                    Icon={() => {return null}}
+                />
                 <TouchableOpacity onPress={filter} style={{ width: screenWidth * 0.1, justifyContent: 'center', alignItems: 'center', marginLeft: 12, height: screenWidth * 0.1, backgroundColor: '#021026', borderRadius: (screenWidth * 0.15)/2 }}>
                     <EvilIcons name="search" size={30} color="white" />
                 </TouchableOpacity>
