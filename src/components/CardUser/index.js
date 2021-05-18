@@ -21,27 +21,27 @@ export default function CardUser({ isOnModal, onOpen, item, setItem, deleteUser,
         <TouchableOpacity onPress={() => { onOpen(); setItem(item) }} style={styles.main(isOnModal)}>
             <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                 <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16 }}>Nome completo: </Text>
-                <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.fullname}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000', flex: 1 }}>{item.fullname}</Text>
             </View>
             <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                 <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16 }}>Nome de usuário: </Text>
-                <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.username}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={{ fontSize: 16, flex: 1, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.username}</Text>
             </View>
             <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                 <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16 }}>E-mail: </Text>
-                <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.email}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={{ fontSize: 16, flex: 1, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.email}</Text>
             </View>
             <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                 <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16 }}>Função: </Text>
-                <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.function}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={{ fontSize: 16, flex: 1, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.function}</Text>
             </View>
             <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                 <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16 }}>Campus: </Text>
-                <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.campus?.city}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={{ fontSize: 16, flex: 1, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.campus?.city}</Text>
             </View>
             <View style={{ flexDirection: 'row' }}>
                 <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16, }}>Status: </Text>
-                <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.status}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={{ fontSize: 16, flex: 1, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.status}</Text>
             </View>
 
             {isOnModal && (

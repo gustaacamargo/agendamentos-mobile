@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
         paddingTop: 20
     },
     mh20: {
-        marginHorizontal: 20
+        paddingHorizontal: 20
     },
     center: { 
         flex: 1,

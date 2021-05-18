@@ -21,11 +21,11 @@ export default function CardCategory({ isOnModal, onOpen, item, setItem, deleteC
         <TouchableOpacity onPress={() => { onOpen(); setItem(item) }} style={styles.main(isOnModal)}>
             <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                 <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16 }}>Descrição: </Text>
-                <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.description}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1, fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.description}</Text>
             </View>
             <View style={{ flexDirection: 'row' }}>
                 <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16, }}>Status: </Text>
-                <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.status}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1, fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.status}</Text>
             </View>
 
             {isOnModal && (

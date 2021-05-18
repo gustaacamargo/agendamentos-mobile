@@ -21,15 +21,15 @@ export default function CardPlace({ isOnModal, onOpen, item, setItem, deletePlac
         <TouchableOpacity onPress={() => { onOpen(); setItem(item) }} style={styles.main(isOnModal)}>
             <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                 <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16 }}>Nome: </Text>
-                <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.name}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1, fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.name}</Text>
             </View>
             <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                 <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16 }}>Capacidade: </Text>
-                <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.capacity}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1, fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.capacity}</Text>
             </View>
             <View style={{ flexDirection: 'row' }}>
                 <Text style={{ fontWeight: '700', color: item.status === 'Ativo' ? '#333' : '#FF0000', fontSize: 16, }}>Status: </Text>
-                <Text style={{ fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.status}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1, fontSize: 16, color: item.status === 'Ativo' ? '#000' : '#FF0000' }}>{item.status}</Text>
             </View>
 
             {isOnModal && (

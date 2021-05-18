@@ -20,35 +20,35 @@ export default function CardSchedule({ isOnModal, onOpen, item, setItem, editSch
     return (
         <TouchableOpacity onPress={() => { onOpen(); setItem(item) }} style={styles.main(isOnModal)}>
             <View style={styles.line}>
-                <Text style={[ styles.text(item.status), { marginBottom: 10 } ]}>Data: {moment(item.date.substring(0,10)).format('DD/MM/YYYY')}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={[ styles.text(item.status), { marginBottom: 10 } ]}>Data: {moment(item.date.substring(0,10)).format('DD/MM/YYYY')}</Text>
                 <View style={styles.row}>
-                    <Text style={styles.text(item.status)}>Inicial: {item.initial.substring(0,5)}</Text>
-                    <Text style={[ styles.text(item.status), { marginLeft: 10 } ]}>Final: {item.final.substring(0,5)}</Text>
+                    <Text ellipsizeMode="tail" numberOfLines={1}  style={styles.text(item.status)}>Inicial: {item.initial.substring(0,5)}</Text>
+                    <Text ellipsizeMode="tail" numberOfLines={1}  style={[ styles.text(item.status), { marginLeft: 10 } ]}>Final: {item.final.substring(0,5)}</Text>
                 </View>
             </View>
             <View style={styles.line}>
-                <Text style={[ styles.text(item.status), { marginBottom: 10 } ]}>Sala: {item.place.name}</Text>
-                <Text style={styles.text(item.status)}>Solicitante: {item.requesting_user.fullname}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={[ styles.text(item.status), { marginBottom: 10 } ]}>Sala: {item.place.name}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={styles.text(item.status)}>Solicitante: {item.requesting_user.fullname}</Text>
             </View>
             
             <View style={styles.row}>
-                <Text style={[ styles.text(item.status), { marginBottom: 10 } ]}>Equipamentos: </Text>
+                <Text ellipsizeMode="tail" numberOfLines={1} style={[ styles.text(item.status), { marginBottom: 10 } ]}>Equipamentos: </Text>
                 <View style={styles.containerEquipaments}>
                     {item.equipaments.map(equipament => (
-                        <Text style={styles.text(item.status)}>{equipament.name}</Text>
+                        <Text ellipsizeMode="tail" numberOfLines={1} style={styles.text(item.status)}>{equipament.name}</Text>
                     ))}
                 </View>
             </View>
-            <Text style={[ styles.text(item.status), { marginBottom: 10 } ]}>Status: {item.status}</Text>
+            <Text ellipsizeMode="tail" numberOfLines={1} style={[ styles.text(item.status), { marginBottom: 10 } ]}>Status: {item.status}</Text>
 
             {isOnModal && (
                 <>
                     <View style={styles.line}/>
-                    <Text style={[ styles.text(item.status), { marginBottom: 10 }] }>Curso: {item.course.name}</Text>
-                    <Text style={[ styles.text(item.status), { marginBottom: 10 }] }>Ano: {item.category.description}</Text>
+                    <Text ellipsizeMode="tail" numberOfLines={1} style={[ styles.text(item.status), { marginBottom: 10 }] }>Curso: {item.course.name}</Text>
+                    <Text ellipsizeMode="tail" numberOfLines={1} style={[ styles.text(item.status), { marginBottom: 10 }] }>Ano: {item.category.description}</Text>
                     <View style={styles.line}/>
-                    <Text style={[ styles.text(item.status), { marginBottom: 10 }] }>Responsável: {item.registration_user.fullname}</Text>
-                    <Text style={[ styles.text(item.status), { marginBottom: 10 }] }>Observações: {item.comments}</Text>
+                    <Text ellipsizeMode="tail" numberOfLines={1} style={[ styles.text(item.status), { marginBottom: 10 }] }>Responsável: {item.registration_user.fullname}</Text>
+                    <Text ellipsizeMode="tail" numberOfLines={1} style={[ styles.text(item.status), { marginBottom: 10 }] }>Observações: {item.comments}</Text>
 
                     {(item.status === 'Confirmado') && (
                         <View style={styles.buttonsGroup}>
@@ -97,7 +97,8 @@ const styles = StyleSheet.create({
     text: status => ({
         fontWeight: '500', 
         color: (status == 'Confirmado') ? '#555' : '#FF0000', 
-        fontSize: 15
+        fontSize: 15,
+        flex: 1
     }),
     line: {
         marginBottom: 12, 
