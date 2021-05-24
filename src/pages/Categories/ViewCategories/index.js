@@ -94,18 +94,17 @@ function ViewCategories({ navigation }) {
                 contentContainerStyle={styles.mh20}
                 data={categories}
                 renderItem={renderCard}
+                ListEmptyComponent={
+                    <View style={styles.center}>
+                        <Text style={styles.txtNothing}>Nenhum ano cadastrado</Text>
+                    </View>
+                }
                 keyExtractor={(item, index) => index.toString()}
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
             <Modalize modalTopOffset={200} ref={modalizeRef}>
                 <CardCategory navigation={navigation} isOnModal={true} onOpen={onOpen} item={category} setItem={setCategory} deleteCategory={deleteCategory} isDeleting={isDeleting} restoreCategory={restoreCategory}/>
             </Modalize>
-
-            {categories.length <= 0 && (
-                <View style={styles.center}>
-                    <Text style={styles.txtNothing}>Nenhum ano cadastrado</Text>
-                </View>
-            )}
         </View>
     );
 }
@@ -123,6 +122,7 @@ const styles = StyleSheet.create({
     },
     center: { 
         flex: 1,
+        paddingTop: 50,
         alignItems: 'center', 
     },
     txtNothing: { 
