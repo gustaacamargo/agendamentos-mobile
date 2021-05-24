@@ -135,16 +135,16 @@ function ViewSchedule({ navigation }) {
                 style={{ paddingTop: 20 }}
                 contentContainerStyle={{ marginHorizontal: 20 }}
                 data={schedules}
+                ListEmptyComponent={
+                    <View style={{ alignItems: 'center', flex: 1, paddingTop: 50 }}>
+                        <Text style={{ color: '#777', fontSize: 16, fontWeight: '500' }}>Nenhum agendamento para este dia</Text>
+                    </View>
+                }
                 renderItem={renderCard}
                 keyExtractor={(item, index) => index.toString()}
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
 
-            {schedules.length <= 0 && (
-                <View style={{ alignItems: 'center', flex: 1 }}>
-                    <Text style={{ color: '#777', fontSize: 16, fontWeight: '500' }}>Nenhum agendamento para este dia</Text>
-                </View>
-            )}
             <Modalize ref={modalizeRef} modalTopOffset={200}>
                 <CardSchedule navigation={navigation} isOnModal={true} onOpen={onOpen} item={schedule} setItem={setSchedule} editSchedule={editSchedule} deleteSchedule={deleteSchedule} isDeleting={isDeleting} />
             </Modalize>
