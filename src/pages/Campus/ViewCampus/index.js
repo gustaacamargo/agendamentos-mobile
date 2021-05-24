@@ -93,6 +93,11 @@ function ViewCampus({ navigation }) {
                 style={styles.pdTop20}
                 contentContainerStyle={styles.mh20}
                 data={campuses}
+                ListEmptyComponent={
+                    <View style={styles.center}>
+                        <Text style={styles.txtNothing}>Nenhum campus cadastrado</Text>
+                    </View>
+                }
                 renderItem={renderCard}
                 keyExtractor={(item, index) => index.toString()}
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
@@ -100,12 +105,6 @@ function ViewCampus({ navigation }) {
             <Modalize modalTopOffset={200} ref={modalizeRef}>
                 <CardCampus navigation={navigation} isOnModal={true} onOpen={onOpen} item={campus} setItem={setCampus} deleteCampus={deleteCampus} isDeleting={isDeleting} restoreCampus={restoreCampus}/>
             </Modalize>
-
-            {campuses.length <= 0 && (
-                <View style={styles.center}>
-                    <Text style={styles.txtNothing}>Nenhum campus cadastrado</Text>
-                </View>
-            )}
         </View>
     );
 }
@@ -123,6 +122,7 @@ const styles = StyleSheet.create({
     },
     center: { 
         flex: 1,
+        paddingTop: 50,
         alignItems: 'center', 
     },
     txtNothing: { 
