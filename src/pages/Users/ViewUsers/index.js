@@ -95,6 +95,11 @@ function ViewUsers({ navigation }) {
                 style={styles.pdTop20}
                 contentContainerStyle={styles.mh20}
                 data={users}
+                ListEmptyComponent={
+                    <View style={styles.center}>
+                        <Text style={styles.txtNothing}>Nenhum usuário cadastrado</Text>
+                    </View>
+                }
                 renderItem={renderCard}
                 keyExtractor={(item, index) => index.toString()}
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
@@ -102,12 +107,6 @@ function ViewUsers({ navigation }) {
             <Modalize modalTopOffset={200} ref={modalizeRef}>
                 <CardUser navigation={navigation} isOnModal={true} onOpen={onOpen} item={user} setItem={setUser} deleteUser={deleteUser} isDeleting={isDeleting} restoreUser={restoreUser}/>
             </Modalize>
-
-            {users.length <= 0 && (
-                <View style={styles.center}>
-                    <Text style={styles.txtNothing}>Nenhum usuário cadastrado</Text>
-                </View>
-            )}
         </View>
     );
 }
@@ -125,6 +124,7 @@ const styles = StyleSheet.create({
     },
     center: { 
         flex: 1,
+        paddingTop: 50,
         alignItems: 'center', 
     },
     txtNothing: { 
