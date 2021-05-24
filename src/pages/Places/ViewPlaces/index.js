@@ -93,6 +93,11 @@ function ViewPlaces({ navigation }) {
                 style={styles.pdTop20}
                 contentContainerStyle={styles.mh20}
                 data={places}
+                ListEmptyComponent={
+                    <View style={styles.center}>
+                        <Text style={styles.txtNothing}>Nenhuma sala cadastrada</Text>
+                    </View>
+                }
                 renderItem={renderCard}
                 keyExtractor={(item, index) => index.toString()}
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
@@ -100,12 +105,6 @@ function ViewPlaces({ navigation }) {
             <Modalize modalTopOffset={200} ref={modalizeRef}>
                 <CardPlace navigation={navigation} isOnModal={true} onOpen={onOpen} item={place} setItem={setPlace} deletePlace={deletePlace} isDeleting={isDeleting} restorePlace={restorePlace}/>
             </Modalize>
-
-            {places.length <= 0 && (
-                <View style={styles.center}>
-                    <Text style={styles.txtNothing}>Nenhuma sala cadastrada</Text>
-                </View>
-            )}
         </View>
     );
 }
@@ -123,6 +122,7 @@ const styles = StyleSheet.create({
     },
     center: { 
         flex: 1,
+        paddingTop: 50,
         alignItems: 'center', 
     },
     txtNothing: { 
