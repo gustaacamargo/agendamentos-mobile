@@ -19,7 +19,7 @@ function ViewSchedule({ navigation }) {
     const [schedules, setSchedules] = useState([]);
     const [schedule, setSchedule] = useState({})
     const [isRefreshing, setIsRefreshing] = useState(true);
-    const [date, setDate] = useState('');
+    const [date, setDate] = useState(moment().format('DD/MM/YYYY'));
     const [periods, setPeriods] = useState([{value: "Manha", label: "Manhã"}, 
                                             {value: "Tarde", label: "Tarde"}, 
                                             {value: "Noite", label: "Noite"}]);
