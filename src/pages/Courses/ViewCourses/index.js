@@ -94,18 +94,17 @@ function ViewCourses({ navigation }) {
                 contentContainerStyle={styles.mh20}
                 data={courses}
                 renderItem={renderCard}
+                ListEmptyComponent={
+                    <View style={styles.center}>
+                        <Text style={styles.txtNothing}>Nenhum curso cadastrado</Text>
+                    </View>
+                }
                 keyExtractor={(item, index) => index.toString()}
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
             <Modalize modalTopOffset={200} ref={modalizeRef}>
                 <CardCourse navigation={navigation} isOnModal={true} onOpen={onOpen} item={course} setItem={setCourse} deleteCourse={deleteCourse} isDeleting={isDeleting} restoreCourse={restoreCourse}/>
             </Modalize>
-
-            {courses.length <= 0 && (
-                <View style={styles.center}>
-                    <Text style={styles.txtNothing}>Nenhum curso cadastrado</Text>
-                </View>
-            )}
         </View>
     );
 }
@@ -123,6 +122,7 @@ const styles = StyleSheet.create({
     },
     center: { 
         flex: 1,
+        paddingTop: 50,
         alignItems: 'center', 
     },
     txtNothing: { 
