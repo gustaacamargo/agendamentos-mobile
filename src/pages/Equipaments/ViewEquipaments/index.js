@@ -94,18 +94,17 @@ function ViewEquipaments({ navigation }) {
                 contentContainerStyle={styles.mh20}
                 data={equipaments}
                 renderItem={renderCard}
+                ListEmptyComponent={
+                    <View style={styles.center}>
+                        <Text style={styles.txtNothing}>Nenhum equipamento cadastrado</Text>
+                    </View>
+                }
                 keyExtractor={(item, index) => index.toString()}
                 refreshControl={ <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             />
             <Modalize modalTopOffset={200} ref={modalizeRef}>
                 <CardEquipament navigation={navigation} isOnModal={true} onOpen={onOpen} item={equipament} setItem={setEquipament} deleteEquipament={deleteEquipament} isDeleting={isDeleting} restoreEquipament={restoreEquipament}/>
             </Modalize>
-
-            {equipaments.length <= 0 && (
-                <View style={styles.center}>
-                    <Text style={styles.txtNothing}>Nenhum equipamento cadastrado</Text>
-                </View>
-            )}
         </View>
     );
 }
@@ -123,6 +122,7 @@ const styles = StyleSheet.create({
     },
     center: { 
         flex: 1,
+        paddingTop: 50,
         alignItems: 'center', 
     },
     txtNothing: { 
