@@ -12,6 +12,7 @@ function EditCourses({ navigation }) {
         })
 
         return () => {
+            navigation.popToTop()
             listener.remove()
         }
     }, [navigation])

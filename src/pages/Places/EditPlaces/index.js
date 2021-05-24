@@ -13,6 +13,7 @@ function EditPlaces({ navigation }) {
         })
 
         return () => {
+            navigation.popToTop()
             listener.remove()
         }
     }, [navigation])

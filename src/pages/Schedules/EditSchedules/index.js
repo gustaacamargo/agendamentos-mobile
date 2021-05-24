@@ -12,6 +12,7 @@ function EditSchedule({ navigation }) {
         })
 
         return () => {
+            navigation.popToTop()
             listener.remove()
         }
     }, [navigation])

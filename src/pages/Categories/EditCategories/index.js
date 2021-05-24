@@ -13,6 +13,7 @@ function EditCategories({ navigation }) {
         })
 
         return () => {
+            navigation.popToTop()
             listener.remove()
         }
     }, [navigation])

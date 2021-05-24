@@ -12,6 +12,7 @@ function EditCampus({ navigation }) {
         })
 
         return () => {
+            navigation.popToTop()
             listener.remove()
         }
     }, [navigation])

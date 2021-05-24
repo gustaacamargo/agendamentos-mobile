@@ -12,6 +12,7 @@ function EditUsers({ navigation }) {
         })
 
         return () => {
+            navigation.popToTop()
             listener.remove()
         }
     }, [navigation])

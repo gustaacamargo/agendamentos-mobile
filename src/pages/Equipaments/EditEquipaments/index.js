@@ -12,6 +12,7 @@ function EditEquipaments({ navigation }) {
         })
 
         return () => {
+            navigation.popToTop()
             listener.remove()
         }
     }, [navigation])
