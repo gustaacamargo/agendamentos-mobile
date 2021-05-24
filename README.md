@@ -20,9 +20,9 @@ Para a sua construção foi utilizado o Expo/React Native + Redux.
 ### :camera: Algumas telas
 
 <div align="center">
-  <img src="https://imgur.com/9hdrNjJ.png" />
+  <img src="https://imgur.com/01lDqB0.png" />
   &nbsp;
-  <img src="https://imgur.com/3OwvfJF.png" />
+  <img src="https://imgur.com/3MjEvSX.png" />
 </div>
 
 ---
